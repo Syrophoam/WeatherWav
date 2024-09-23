@@ -79,25 +79,24 @@ void setTransform(double scaleX, double scaleY, int transX, int transY){
 }
 
 std::string bitMapView(
-                 int height, int width, std::vector<std::vector<pixelData>> pixDat,double aspectRatio ,double scale){
+                 int height, int width, std::vector<std::vector<pixelData>> pixDat ,double scale){
     std::string frame;
     int xIndex = 0;
     int yIndex = 0;
     int row = ws.ws_row;
     int col = ws.ws_col;
-    
-    //row /= aspectRatio;
+    double aspectRatio = double(ws.ws_xpixel)/double(ws.ws_ypixel);
  
     for (int i = 0; i < row; i++) { // height
 
         double scaleY = double(i) / (double(col)/double(width));
-        scaleY /= scale;
+        
         scaleY *= trans.scaleY;
         scaleY += trans.transY;
         scaleY *= aspectRatio;
         yIndex = scaleY;
         
-        yIndex = fmod(scaleY, height);
+        //yIndex = fmod(scaleY, height);
         //yIndex = fmin(yIndex, height); // clamp
         
         for (int j = 0; j < col; j++) { // width
@@ -107,15 +106,14 @@ std::string bitMapView(
             scaleX *= trans.scaleX;
             scaleX += trans.transX;
             
-            scaleX = fmod(scaleX, width); // wrap
+            
+            //scaleX = fmod(scaleX, width); // wrap
+            
             xIndex = scaleX;
             
             int pixValue = pixDat[xIndex][abs(yIndex-height)].r;
             pixValue = double(pixValue)/ (255.f/66.f);
-            
-//            pixValue -= rand()%30;
-//            pixValue = fmax(pixValue, 0);
-//            
+
             if(pixValue > 25){
                 frame += "\033[1;31m"; // set colour
                 frame += grayScale[pixValue%66];

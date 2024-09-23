@@ -8,45 +8,102 @@
 #include "Midi.hpp"
 #include "GUI.hpp"
 #include "utils.h"
+#include "API.h"
 #include <JuceHeader.h>
 #include "cbmp/cbmp.h"
 #include <chrono>
+#include <nlohmann/json.hpp>
+#include <curl/curl.h>
 
 int main(){
     bool running = true;
     
     //----- GUI ------//
     initGUI();
-
     
-    double aspectRatio = double(ws.ws_xpixel)/double(ws.ws_ypixel);
-    
-    BMP *bmpLogo = bopen("/Users/syrofullerton/JUCE/Syro/WeatherWav/Media/Doom_logo.bmp");
+    BMP *bmpLogo = bopen("/Users/syrofullerton/JUCE/Syro/WeatherWav/Media/Logo.bmp");
     if (!bmpLogo) {
         return -1;
     }
+    
     std::vector<int> logoSize = getImageDimensions(bmpLogo);
     int widthLogo = logoSize[0];
     int heightLogo = logoSize[1];
     
     std::vector<std::vector<pixelData>> logodata(widthLogo,std::vector<pixelData>(heightLogo));
     logodata = getImageData(bmpLogo, widthLogo, heightLogo);
-    setTransform(1., 1., 0., 0.);
+    setTransform(10., 1., 0., 0.);
     
-    
+    bclose(bmpLogo);
     while (running) {
         updateGUI();
         
-        aspectRatio = double(ws.ws_xpixel)/double(ws.ws_ypixel);
         std::string frame;
-        frame = bitMapView(widthLogo, heightLogo, logodata, aspectRatio, .8f);
+        frame = bitMapView(widthLogo, heightLogo, logodata, .8f);
         
         std::cout << frame;
+        int brk;
+        //std::cin >> brk;
         
         struct timespec tim;
         tim.tv_nsec = 50'000'000;
         nanosleep(&tim, NULL);
+        running = false;
     }
+    
+    //----- JSON - send ------//
+    std::map pos = std::map<std::string,float>{
+        {"lon",174.7842} , {"lat",-37.7935}
+    };
+    int repeats = 4;
+    
+    
+    json j = request(pos,repeats);
+    std::string jsonString = j.dump();
+    
+    //----- CURL ------//
+    char* data = 0;
+    std::string key = "S14jxYHPDoXhtPwrvYRm9m";
+    CURL *handle = curl_easy_init();
+    struct curl_slist *headers = NULL;
+    
+    if (!handle) {
+        printf("curl couldnt init");
+        return 1;
+    }
+        CURLcode res;
+        
+        curl_easy_setopt(handle, CURLOPT_URL, "https://forecast-v2.metoceanapi.com/point/time");
+        curl_easy_setopt(handle, CURLOPT_WRITEDATA, &data);
+        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &CURLWriteFunction);
+        
+        std::string key_header = "x-api-key: " + key;
+        headers = curl_slist_append(headers, key_header.c_str());
+    
+    headers = curl_slist_append(headers, "accept: application/json");
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+    
+    curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(handle, CURLOPT_POSTFIELDS, jsonString.c_str());
+    
+    res = curl_easy_perform(handle);
+    
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(handle);
+    
+    printf("Page data:\n\n%s\n", data);
+    
+    //----- JSON - Recieve ------//
+    json jsonResponse = json::parse(data);
+    
+    json testParse = jsonResponse["variables"];
+    json waveHeight = testParse["wave.height"];
+    json waveHeightData = waveHeight["data"];
+    
+
+    double testdata = waveHeightData[0];
+    
+    free(data);
     
     //----- MIDI ------//
     std::remove("/Users/syrofullerton/JUCE/Syro/WeatherWav/Midi.mid");
@@ -55,7 +112,8 @@ int main(){
 
     std::vector<double> values;
     values = {1,0.4,0.3,0.2};
-    juce::MidiMessageSequence funcSeq = writeSequence(values);
+    //juce::MidiMessageSequence funcSeq = writeSequence(values);
+    juce::MidiMessageSequence funcSeq = writeSequence(waveHeightData, repeats+1); 
 
     midiFile.addTrack(funcSeq);
     juce::FileOutputStream stream = juce::File("/Users/syrofullerton/JUCE/Syro/WeatherWav/Midi.mid");

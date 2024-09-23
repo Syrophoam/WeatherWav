@@ -14,6 +14,7 @@
 		0DF0E7612CA12B31004CD901 /* Doom_logo.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 0DF0E75D2CA12B31004CD901 /* Doom_logo.bmp */; };
 		0DF0E7622CA12B31004CD901 /* Logo.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 0DF0E75E2CA12B31004CD901 /* Logo.bmp */; };
 		0DF0E7632CA12B31004CD901 /* mapBmp.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 0DF0E75F2CA12B31004CD901 /* mapBmp.bmp */; };
+		0DF0E7672CA17715004CD901 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DF0E7662CA13D7F004CD901 /* libcurl.tbd */; };
 		2ADFAD0ED05876E7EE12F637 /* RecentFilesMenuTemplate.nib in Resources */ = {isa = PBXBuildFile; fileRef = 38FBF152D7262F779577856C /* RecentFilesMenuTemplate.nib */; };
 		685D4C99A2226A046CFC0B02 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0ABED8544E684A4E1623F78 /* Accelerate.framework */; };
 		6F3F8E570009C7D2F1F05269 /* include_juce_core.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39CCE9A6B88A9B016FB8F930 /* include_juce_core.mm */; };
@@ -26,7 +27,6 @@
 /* Begin PBXFileReference section */
 		0DF0E72A2CA120D5004CD901 /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = ../../Source/Main.cpp; sourceTree = "<group>"; };
 		0DF0E72B2CA120D5004CD901 /* Midi.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Midi.hpp; path = ../../Source/Midi.hpp; sourceTree = "<group>"; };
-		0DF0E7332CA122F7004CD901 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		0DF0E74C2CA1255A004CD901 /* WeatherWav - App copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WeatherWav - App copy-Info.plist"; path = "/Users/syrofullerton/JUCE/Syro/WeatherWav/Builds/MacOSX/WeatherWav - App copy-Info.plist"; sourceTree = "<absolute>"; };
 		0DF0E74D2CA1270B004CD901 /* GUI.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = GUI.hpp; path = ../../Source/GUI.hpp; sourceTree = "<group>"; };
 		0DF0E74E2CA12760004CD901 /* cbmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cbmp.c; sourceTree = "<group>"; };
@@ -36,6 +36,8 @@
 		0DF0E75E2CA12B31004CD901 /* Logo.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Logo.bmp; sourceTree = "<group>"; };
 		0DF0E75F2CA12B31004CD901 /* mapBmp.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = mapBmp.bmp; sourceTree = "<group>"; };
 		0DF0E7642CA12E58004CD901 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = utils.h; path = ../../Source/utils.h; sourceTree = "<group>"; };
+		0DF0E7652CA13CA5004CD901 /* API.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = API.h; path = ../../Source/API.h; sourceTree = "<group>"; };
+		0DF0E7662CA13D7F004CD901 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		1BFCEC29CA1850E5ECCC99B2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		35F3B2B82790FBA7EACEE608 /* juce_core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_core; path = /Users/syrofullerton/JUCE/modules/juce_core; sourceTree = "<absolute>"; };
 		360509C3CA324506C4D26E83 /* WeatherWav.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherWav.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -56,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0DF0E7672CA17715004CD901 /* libcurl.tbd in Frameworks */,
 				685D4C99A2226A046CFC0B02 /* Accelerate.framework in Frameworks */,
 				AE547A13BFCCEFD4F37B54FE /* Cocoa.framework in Frameworks */,
 				FBDB0807ABDD2D319302DD51 /* Foundation.framework in Frameworks */,
@@ -67,14 +70,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0DF0E7322CA122F7004CD901 /* WeatherWavCommandLine */ = {
-			isa = PBXGroup;
-			children = (
-				0DF0E7332CA122F7004CD901 /* main.cpp */,
-			);
-			path = WeatherWavCommandLine;
-			sourceTree = "<group>";
-		};
 		0DF0E7512CA12760004CD901 /* cbmp */ = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +95,7 @@
 		1F682246E93661560C444CAC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0DF0E7662CA13D7F004CD901 /* libcurl.tbd */,
 				B0ABED8544E684A4E1623F78 /* Accelerate.framework */,
 				C6F46EF80D8D5BA56C6128B8 /* Cocoa.framework */,
 				473CB3FE3185AECF7B16B1BF /* Foundation.framework */,
@@ -116,12 +112,12 @@
 				0DF0E7512CA12760004CD901 /* cbmp */,
 				0DF0E74D2CA1270B004CD901 /* GUI.hpp */,
 				0DF0E72A2CA120D5004CD901 /* Main.cpp */,
+				0DF0E7652CA13CA5004CD901 /* API.h */,
 				0DF0E7642CA12E58004CD901 /* utils.h */,
 				0DF0E72B2CA120D5004CD901 /* Midi.hpp */,
 				D7C9631D6773A97CA74DCD65 /* JUCE Modules */,
 				AF4096B59BAC032048D1768C /* JUCE Library Code */,
 				707F99DBF3917EFE39F8CFE4 /* Resources */,
-				0DF0E7322CA122F7004CD901 /* WeatherWavCommandLine */,
 				1F682246E93661560C444CAC /* Frameworks */,
 				681AD3C24BA2219AAC941B67 /* Products */,
 				0DF0E74C2CA1255A004CD901 /* WeatherWav - App copy-Info.plist */,
@@ -310,11 +306,12 @@
 					"$(SRCROOT)/../../JuceLibraryCode",
 					/Users/syrofullerton/JUCE/modules,
 					"$(inherited)",
+					"/opt/homebrew/Cellar/nlohmann-json/3.11.3/include",
 				);
 				INFOPLIST_FILE = "Info-App.plist";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syrofullerton/JUCE/modules";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.WeatherWav;
 				PRODUCT_NAME = WeatherWav;
@@ -349,7 +346,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -397,7 +394,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -464,12 +461,13 @@
 					"$(SRCROOT)/../../JuceLibraryCode",
 					/Users/syrofullerton/JUCE/modules,
 					"$(inherited)",
+					"/opt/homebrew/Cellar/nlohmann-json/3.11.3/include",
 				);
 				INFOPLIST_FILE = "Info-App.plist";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syrofullerton/JUCE/modules";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.WeatherWav;
 				PRODUCT_NAME = WeatherWav;
