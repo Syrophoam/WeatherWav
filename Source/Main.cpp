@@ -100,8 +100,6 @@ int main(){
     json waveHeight = testParse["wave.height"];
     json waveHeightData = waveHeight["data"];
     
-
-    double testdata = waveHeightData[0];
     
     free(data);
     
@@ -111,9 +109,10 @@ int main(){
     midiFile.setTicksPerQuarterNote(96);
 
     std::vector<double> values;
-    values = {1,0.4,0.3,0.2};
+
     //juce::MidiMessageSequence funcSeq = writeSequence(values);
-    juce::MidiMessageSequence funcSeq = writeSequence(waveHeightData, repeats+1); 
+    values = normalizeValues(waveHeightData);
+    juce::MidiMessageSequence funcSeq = writeSequence(values, repeats);
 
     midiFile.addTrack(funcSeq);
     juce::FileOutputStream stream = juce::File("/Users/syrofullerton/JUCE/Syro/WeatherWav/Midi.mid");
