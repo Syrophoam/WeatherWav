@@ -15,7 +15,7 @@ std::vector<double> normalizeValues(nlohmann::json values){
     unsigned long size = values.size();
     
     double max = 0;
-    double min = 1000; // any large number
+    double min = 99999999999; // any large number
     
     for(int i = 0; i < size; i++){
         double buff = values[i];
@@ -45,15 +45,17 @@ juce::MidiMessageSequence writeSequence(std::vector<double> values, int numOfVal
     
     juce::MidiMessage ccMsg;
     juce::MidiMessageSequence seq;
+    int ticks = 96;
     
     for (int j = 0; j < numOfValues; j++) {
         
         double val1 = values[j];
-        double val2 = values[(j+1)%4];
-        
-        for (int i = 0; i < (96*4); i++) {
-            ccMsg = ccMsg.controllerEvent(1, 11, uint8_t(lerp(val1, val2, double(i)/(96.f*4.f) ) * 127) );
-            ccMsg.addToTimeStamp(i + (j*96*4));
+        double val2 = values[(j+1)%numOfValues];
+         
+        for (int i = 0; i < (ticks*numOfValues); i++) {
+            ccMsg =
+            ccMsg.controllerEvent(1, 11, uint8_t(lerp(val1, val2, double(i)/(double(ticks)*double(numOfValues)) ) * 127) );
+            ccMsg.addToTimeStamp(i + (j*ticks*numOfValues));
             seq.addEvent(ccMsg);
         }
     }

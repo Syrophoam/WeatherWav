@@ -55,7 +55,7 @@ int main(){
     std::map pos = std::map<std::string,float>{
         {"lon",174.7842} , {"lat",-37.7935}
     };
-    int repeats = 4;
+    int repeats = 24;
     
     
     json j = request(pos,repeats);
@@ -98,8 +98,9 @@ int main(){
     
     json testParse = jsonResponse["variables"];
     json waveHeight = testParse["wave.height"];
+    json airVisibility = testParse["air.visibility"];
     json waveHeightData = waveHeight["data"];
-    
+    json airVisiData = airVisibility["data"];
     
     free(data);
     
@@ -110,8 +111,7 @@ int main(){
 
     std::vector<double> values;
 
-    //juce::MidiMessageSequence funcSeq = writeSequence(values);
-    values = normalizeValues(waveHeightData);
+    values = normalizeValues(airVisiData);
     juce::MidiMessageSequence funcSeq = writeSequence(values, repeats);
 
     midiFile.addTrack(funcSeq);
