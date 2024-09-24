@@ -3,7 +3,7 @@
 #include <string.h>
 #include <vector>
 #include <JuceHeader.h>
-#include <nlohmann/json.hpp>
+#include <nlohmann/json.hpp> 
   
 double lerp(double a, double b, double interp){
     interp = pow(interp, 2);

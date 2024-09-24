@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="pyzw5w" name="WeatherWav" projectType="guiapp" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+<JUCERPROJECT id="pyzw5w" name="WeatherWav" projectType="consoleapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" cppLanguageStandard="20"
+              headerPath="/opt/homebrew/Cellar/nlohmann-json/3.11.3/include">
   <MAINGROUP id="amn1OH" name="WeatherWav">
+    <GROUP id="{E46A885E-CAFE-0C58-77F2-06CA6A6086AC}" name="Source">
+      <GROUP id="{61A8409A-BAE9-37D0-43FC-54E583B1D234}" name="cbmp">
+        <FILE id="e6AxkX" name="cbmp.c" compile="1" resource="0" file="Source/cbmp/cbmp.c"/>
+        <FILE id="WrGEYH" name="cbmp.h" compile="0" resource="0" file="Source/cbmp/cbmp.h"/>
+        <FILE id="mQbJ2B" name="CMakeLists.txt" compile="0" resource="1" file="Source/cbmp/CMakeLists.txt"/>
+      </GROUP>
+      <FILE id="qtwziy" name="API.h" compile="0" resource="0" file="Source/API.h"/>
+      <FILE id="iCymrP" name="GUI.hpp" compile="0" resource="0" file="Source/GUI.hpp"/>
+      <FILE id="Wlap4w" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="r8iirH" name="Midi.hpp" compile="0" resource="0" file="Source/Midi.hpp"/>
+      <FILE id="xRm6ZD" name="utils.h" compile="0" resource="0" file="Source/utils.h"/>
+    </GROUP>
     <GROUP id="{C6A52D87-4E12-AFA8-0AEB-4B83C7F14B2D}" name="Source"/>
   </MAINGROUP>
   <MODULES>
