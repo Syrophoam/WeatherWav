@@ -3,6 +3,8 @@
 
 const char* grayScale[] = {"$","@","B","%","8","&","W","M","#","*","o","a","h","k","b","d","p","q","w","m","Z","O","0","Q","L","C","J","U","Y","X","z","c","v","u","n","x","r","j","f","t","/","|","(",")","1","{","}","[","]","?","-","_","+","~","<",">","i","!","l","I",";",":",",","^","`","."," "};
 
+const char* blockScale[] = {"█","▓","▒","░"," "};
+
 struct pixelData{
     uint8_t r;
     uint8_t g;
@@ -34,6 +36,7 @@ void initGUI(){
 }
 void updateGUI(){
     ioctl( 0, TIOCGWINSZ, &ws );
+    
 }
 
 std::vector<std::vector<pixelData>> getImageData(BMP *bmpImage, int width, int height){
@@ -84,9 +87,6 @@ std::string bitMapView(
     int row = ws.ws_row;
     int col = ws.ws_col;
     double aspectRatio = double(ws.ws_xpixel)/double(ws.ws_ypixel);
-//    row = 80;
-//    col = 42;
-    double last;
     
     for (int i = row; i > 0; i--) { // height
         double uvY = double(i) / double(row);
@@ -100,10 +100,9 @@ std::string bitMapView(
             uvX *= width;
             
             int pixVal = pixDat[uvX][uvY].r;
+            pixVal = double(pixVal)/(256.f/5.f);
             
-            frame += grayScale[pixVal%66];
-
-            //frame += "@";
+            frame += blockScale[pixVal%5];
 
         }
         frame += '\n';
