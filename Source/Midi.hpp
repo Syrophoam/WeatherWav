@@ -45,7 +45,7 @@ juce::MidiMessageSequence writeSequence(std::vector<double> values, int numOfVal
     
     juce::MidiMessage ccMsg;
     juce::MidiMessageSequence seq;
-    int ticks = 96;
+    int ticks = 96 ;
     
     for (int j = 0; j < numOfValues; j++) {
         

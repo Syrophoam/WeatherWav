@@ -1,13 +1,16 @@
+
+
+#include <JuceHeader.h>
 #include "Midi.hpp"
 #include "GUI.hpp"
 #include "utils.h"
 #include "API.h"
-#include <JuceHeader.h>
 #include "cbmp/cbmp.h"
 #include <chrono>
 #include <nlohmann/json.hpp>
 #include <curl/curl.h>
 #include <curses.h>
+
 
 int main(){
 
@@ -16,7 +19,7 @@ int main(){
     //----- GUI ------//
     initGUI();
     
-    BMP *bmpLogo = bopen("/Users/syrofullerton/JUCE/Syro/WeatherWav/Media/Logo.bmp");
+    BMP *bmpLogo = bopen("/Users/syrofullerton/WeatherWav/Media/Logo.bmp");
     if (!bmpLogo) {
         return -1;
     }
@@ -45,7 +48,7 @@ int main(){
         struct timespec tim;
         tim.tv_nsec = 50'000'000;
         nanosleep(&tim, NULL);
-        running = false;
+        //running = false;
         frameCounter ++;
     }
     
@@ -100,7 +103,7 @@ int main(){
     free(data);
     
     //----- MIDI ------//
-    std::remove("/Users/syrofullerton/JUCE/Syro/WeatherWav/Midi.mid");
+    std::remove("/Users/syrofullerton/WeatherWav/Midi.mid");
     juce::MidiFile midiFile;
     midiFile.setTicksPerQuarterNote(96);
 
@@ -110,7 +113,7 @@ int main(){
     juce::MidiMessageSequence funcSeq = writeSequence(values, repeats);
 
     midiFile.addTrack(funcSeq);
-    juce::FileOutputStream stream = juce::File("/Users/syrofullerton/JUCE/Syro/WeatherWav/Midi.mid");
+    juce::FileOutputStream stream = juce::File("/Users/syrofullerton/WeatherWav/Midi.mid");
     midiFile.writeTo(stream);
     
     return 0;
