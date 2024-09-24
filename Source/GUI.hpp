@@ -81,49 +81,30 @@ void setTransform(double scaleX, double scaleY, int transX, int transY){
 std::string bitMapView(
                  int height, int width, std::vector<std::vector<pixelData>> pixDat ,double scale){
     std::string frame;
-    int xIndex = 0;
-    int yIndex = 0;
     int row = ws.ws_row;
     int col = ws.ws_col;
     double aspectRatio = double(ws.ws_xpixel)/double(ws.ws_ypixel);
- 
-    for (int i = 0; i < row; i++) { // height
+//    row = 80;
+//    col = 42;
+    double last;
+    
+    for (int i = row; i > 0; i--) { // height
+        double uvY = double(i) / double(row);
+        uvY /= aspectRatio;
+        uvY *= height;
+        
 
-        double scaleY = double(i) / (double(col)/double(width));
-        
-        scaleY *= trans.scaleY;
-        scaleY += trans.transY;
-        scaleY *= aspectRatio;
-        yIndex = scaleY;
-        
-        //yIndex = fmod(scaleY, height);
-        //yIndex = fmin(yIndex, height); // clamp
-        
         for (int j = 0; j < col; j++) { // width
+            double uvX = double(j) / double(col);
+            uvX *= aspectRatio;
+            uvX *= width;
             
+            int pixVal = pixDat[uvX][uvY].r;
             
-            double scaleX = double(j) / (double(col)/double(width));
-            scaleX *= trans.scaleX;
-            scaleX += trans.transX;
-            
-            
-            //scaleX = fmod(scaleX, width); // wrap
-            
-            xIndex = scaleX;
-            
-            int pixValue = pixDat[xIndex][abs(yIndex-height)].r;
-            pixValue = double(pixValue)/ (255.f/66.f);
+            frame += grayScale[pixVal%66];
 
-            if(pixValue > 25){
-                frame += "\033[1;31m"; // set colour
-                frame += grayScale[pixValue%66];
-                frame += "\033[0m";
-            }else{
-                frame += "\033[1;34m"  ;
-                frame += grayScale[pixValue%66];
-                frame += "\033[0m";
-            }
-            
+            //frame += "@";
+
         }
         frame += '\n';
     }

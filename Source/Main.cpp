@@ -1,10 +1,3 @@
-//
-//  Main.cpp
-//  WeatherWav - App
-//
-//  Created by Syro Fullerton on 23/09/2024.
-//
-
 #include "Midi.hpp"
 #include "GUI.hpp"
 #include "utils.h"
@@ -14,8 +7,10 @@
 #include <chrono>
 #include <nlohmann/json.hpp>
 #include <curl/curl.h>
+#include <curses.h>
 
 int main(){
+
     bool running = true;
     
     //----- GUI ------//
@@ -32,11 +27,13 @@ int main(){
     
     std::vector<std::vector<pixelData>> logodata(widthLogo,std::vector<pixelData>(heightLogo));
     logodata = getImageData(bmpLogo, widthLogo, heightLogo);
-    setTransform(10., 1., 0., 0.);
+    
     
     bclose(bmpLogo);
+    unsigned long frameCounter = 0;
     while (running) {
         updateGUI();
+        setTransform(1., 1., frameCounter%widthLogo, 0.);
         
         std::string frame;
         frame = bitMapView(widthLogo, heightLogo, logodata, .8f);
@@ -48,7 +45,8 @@ int main(){
         struct timespec tim;
         tim.tv_nsec = 50'000'000;
         nanosleep(&tim, NULL);
-        running = false;
+        //running = false;
+        frameCounter ++;
     }
     
     //----- JSON - send ------//
@@ -56,7 +54,6 @@ int main(){
         {"lon",174.7842} , {"lat",-37.7935}
     };
     int repeats = 24;
-    
     
     json j = request(pos,repeats);
     std::string jsonString = j.dump();
@@ -91,16 +88,14 @@ int main(){
     curl_slist_free_all(headers);
     curl_easy_cleanup(handle);
     
-    printf("Page data:\n\n%s\n", data);
+    //printf("Page data:\n\n%s\n", data);
     
     //----- JSON - Recieve ------//
     json jsonResponse = json::parse(data);
+
+    json variables = jsonResponse["variables"];
+    json waveHeight = variables["wave.height"]["data"];
     
-    json testParse = jsonResponse["variables"];
-    json waveHeight = testParse["wave.height"];
-    json airVisibility = testParse["air.visibility"];
-    json waveHeightData = waveHeight["data"];
-    json airVisiData = airVisibility["data"];
     
     free(data);
     
@@ -111,7 +106,7 @@ int main(){
 
     std::vector<double> values;
 
-    values = normalizeValues(airVisiData);
+    values = normalizeValues(waveHeight);
     juce::MidiMessageSequence funcSeq = writeSequence(values, repeats);
 
     midiFile.addTrack(funcSeq);

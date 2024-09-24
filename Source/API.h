@@ -51,10 +51,9 @@ json request(std::map<std::string,float> pos, int repeats){
     
     const auto now = std::chrono::system_clock::now();
     
-    std::string currentTime;// = std::format("{:%FT%H:%M:00Z}", now);
+    std::string currentTime;
     //currentTime = "2024-09-23T06:15:00Z";
     currentTime = std::format("{:%FT%H:%M:00Z}", now);
-    
     
     std::map time = std::map<std::string, std::string>{
         {"from",currentTime}, {"interval","1h"}
