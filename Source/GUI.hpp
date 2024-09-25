@@ -24,6 +24,11 @@ struct transform{
     int transY;
 };
 
+struct imgData{
+    int width, height;
+    BMP *bmp;
+};
+
 struct winsize ws;
 void initGUI(){
     std::cout << "\e[8;48;160t";
@@ -36,6 +41,26 @@ void initGUI(){
 }
 void updateGUI(){
     ioctl( 0, TIOCGWINSZ, &ws );
+}
+
+void loadImage(char* fileName, imgData *imgStruct){
+    
+    std::string home{std::getenv("HOME")};
+    
+    std::string path = home;
+    path += "/WeatherWav/Media/";
+    
+    std::string logoPath_S = path;
+    logoPath_S += fileName;
+    
+    BMP *bmpData = bopen(logoPath_S.data());
+    if (!bmpData) {
+        return;
+    }
+    
+    imgStruct->bmp = bmpData;
+    imgStruct->width = get_width(bmpData);
+    imgStruct->height = get_height(bmpData);
     
 }
 
@@ -64,12 +89,7 @@ std::vector<std::vector<pixelData>> getImageData(BMP *bmpImage, int width, int h
     return pixDatVec;
 }
 
-std::vector<int> getImageDimensions(BMP *bmpImage){
-    const int width = get_width(bmpImage);
-    const int height = get_height(bmpImage);
-    std::vector<int> dimVec = {width,height};
-    return dimVec;
-}
+
 
 transform trans;
 

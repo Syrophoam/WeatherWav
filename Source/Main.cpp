@@ -1,5 +1,3 @@
-
-
 #include <JuceHeader.h>
 #include "Midi.hpp"
 #include "GUI.hpp"
@@ -7,49 +5,56 @@
 #include "API.h"
 #include "cbmp/cbmp.h"
 #include <chrono>
-#include <nlohmann/json.hpp>
+#include <nlohmann/json.hpp>  
 #include <curl/curl.h>
 #include <curses.h>
 
+#define METSERVICE 1
+#define OPENWEATHER 2
+
+// KR coordinates
+
+ // -41.298665, 174.775490
+
 
 int main(){
-
     bool running = true;
+    
+    std::string home{std::getenv("HOME")};
+    std::string path = home;
+    path += "/WeatherWav/Media/";
+    
+    int weatherService = 0;
+    weatherService = OPENWEATHER;
     
     //----- GUI ------//
     initGUI();
+
+    imgData logo;
+    loadImage("Logo.bmp", &logo); 
     
-    BMP *bmpLogo = bopen("/Users/syrofullerton/WeatherWav/Media/Logo.bmp");
-    if (!bmpLogo) {
-        return -1;
-    }
+    std::vector<std::vector<pixelData>> logodata(logo.width,std::vector<pixelData>(logo.height));
+    logodata = getImageData(logo.bmp, logo.width, logo.height);
     
-    std::vector<int> logoSize = getImageDimensions(bmpLogo);
-    int widthLogo = logoSize[0];
-    int heightLogo = logoSize[1];
+    bclose(logo.bmp);
     
-    std::vector<std::vector<pixelData>> logodata(widthLogo,std::vector<pixelData>(heightLogo));
-    logodata = getImageData(bmpLogo, widthLogo, heightLogo);
-    
-    
-    bclose(bmpLogo);
     unsigned long frameCounter = 0;
     while (running) {
         updateGUI();
-        setTransform(1., 1., frameCounter%widthLogo, 0.);
+        setTransform(1., 1., frameCounter%logo.width, 0.);
         
         std::string frame;
-        frame = bitMapView(widthLogo, heightLogo, logodata, .8f);
         
+        //width & height are the wrong way around but works
+        frame = bitMapView(logo.width, logo.height, logodata, 1.f);
         std::cout << frame;
-        int brk;
-        //std::cin >> brk;
+        frameCounter ++;
         
         struct timespec tim;
         tim.tv_nsec = 50'000'000;
         nanosleep(&tim, NULL);
-        //running = false;
-        frameCounter ++;
+        running = false;
+        
     }
     
     //----- JSON - send ------//
@@ -58,8 +63,14 @@ int main(){
     };
     int repeats = 24;
     
-    json j = request(pos,repeats);
-    std::string jsonString = j.dump();
+    json jMS = requestMS(pos,repeats);
+    std::string jsonString = jMS.dump();
+    
+    std::string keyOW = "0f7dae7414bfba2cbd826fc5c6b04dd6";
+    std::string openWeather;
+    openWeather = "https://api.openweathermap.org/data/2.5/weather?lat=-41.29&lon=174.77&appid=";
+    openWeather = "api.openweathermap.org/data/2.5/forecast?lat=-41.29&lon=174.77&appid=";
+    openWeather += keyOW;
     
     //----- CURL ------//
     char* data = 0;
@@ -71,49 +82,98 @@ int main(){
         printf("curl couldnt init");
         return 1;
     }
-        CURLcode res;
-        
+    CURLcode res;
+    
+    if (weatherService == METSERVICE)
         curl_easy_setopt(handle, CURLOPT_URL, "https://forecast-v2.metoceanapi.com/point/time");
-        curl_easy_setopt(handle, CURLOPT_WRITEDATA, &data);
-        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &CURLWriteFunction);
+    
+    if (weatherService == OPENWEATHER)
+        curl_easy_setopt(handle, CURLOPT_URL, openWeather.c_str());
+  
+    
+    curl_easy_setopt(handle, CURLOPT_WRITEDATA, &data);
+    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &CURLWriteFunction);
         
-        std::string key_header = "x-api-key: " + key;
-        headers = curl_slist_append(headers, key_header.c_str());
-    
-    headers = curl_slist_append(headers, "accept: application/json");
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    
-    curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(handle, CURLOPT_POSTFIELDS, jsonString.c_str());
-    
+    if (weatherService == METSERVICE) {
+        std::string key_header_MS = "x-api-key: " + key;
+        headers = curl_slist_append(headers, key_header_MS.c_str());
+        
+        headers = curl_slist_append(headers, "accept: application/json");
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        
+        curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, jsonString.c_str());
+    }
+
     res = curl_easy_perform(handle);
     
     curl_slist_free_all(headers);
     curl_easy_cleanup(handle);
-    
-    //printf("Page data:\n\n%s\n", data);
+     
+    printf("Page data:\n\n%s\n", data);
     
     //----- JSON - Recieve ------//
-    json jsonResponse = json::parse(data);
-
-    json variables = jsonResponse["variables"];
-    json waveHeight = variables["wave.height"]["data"];
     
+    json jsonResponse;
+    json waveHeight;
+    std::vector<double> values;
+    if (weatherService == METSERVICE) {
+        jsonResponse = json::parse(data);
+
+        json variables = jsonResponse["variables"];
+        waveHeight = variables["wave.height"]["data"];
+        values = normalizeValues(waveHeight);
+        // put more variables //
+    }
+    
+    //std::vector<struct openWeather> OWVec;
+    struct openWeather OWVec;
+    
+    if (weatherService == OPENWEATHER) {
+        jsonResponse = json::parse(data);
+        int count = jsonResponse["cnt"];
+
+        OWVec.cityName = jsonResponse["city"]["name"];
+        OWVec.cityCountry = jsonResponse["city"]["country"];
+        OWVec.citySunrise = jsonResponse["city"]["sunrise"];
+        OWVec.citySunset = jsonResponse["city"]["sunset"];
+        OWVec.count = count;
+        
+        fillStruct(jsonResponse, OWVec, count);
+        
+        normalizeResponseDouble(OWVec.temp);
+        normalizeResponseDouble(OWVec.temp_max);
+        normalizeResponseDouble(OWVec.temp_min);
+        normalizeResponseDouble(OWVec.feels_like);
+        normalizeResponseDouble(OWVec.windSpeed);
+        normalizeResponseDouble(OWVec.windGust);
+        normalizeResponseDouble(OWVec.pop);
+        normalizeResponseDouble(OWVec.rain3h);
+        normalizeResponseDouble(OWVec.snow3h);
+        
+        normalizeResponseInt(OWVec.pressure);
+        normalizeResponseInt(OWVec.sea_level);
+        normalizeResponseInt(OWVec.grnd_level);
+        normalizeResponseInt(OWVec.humidity);
+        normalizeResponseInt(OWVec.clouds);
+        normalizeResponseInt(OWVec.visibility);
+    }
     
     free(data);
     
     //----- MIDI ------//
-    std::remove("/Users/syrofullerton/WeatherWav/Midi.mid");
+    std::string midiPath_S = "/Users/syro/WeatherWav/Media/";
+    char* midiPath = "midi.mid";
+    midiPath_S += midiPath;
+    
+    std::remove(midiPath_S.data());
     juce::MidiFile midiFile;
     midiFile.setTicksPerQuarterNote(96);
 
-    std::vector<double> values;
-
-    values = normalizeValues(waveHeight);
-    juce::MidiMessageSequence funcSeq = writeSequence(values, repeats);
+    juce::MidiMessageSequence funcSeq = writeSequence(OWVec.windSpeed);
 
     midiFile.addTrack(funcSeq);
-    juce::FileOutputStream stream = juce::File("/Users/syrofullerton/WeatherWav/Midi.mid");
+    juce::FileOutputStream stream = juce::File(midiPath_S.data());
     midiFile.writeTo(stream);
     
     return 0;

@@ -2,7 +2,8 @@
 
 <JUCERPROJECT id="pyzw5w" name="WeatherWav" projectType="consoleapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" cppLanguageStandard="20"
-              headerPath="/opt/homebrew/Cellar/nlohmann-json/3.11.3/include">
+              headerPath="/opt/homebrew/Cellar/nlohmann-json/3.11.3/include"
+              displaySplashScreen="1">
   <MAINGROUP id="amn1OH" name="WeatherWav">
     <GROUP id="{E46A885E-CAFE-0C58-77F2-06CA6A6086AC}" name="Source">
       <GROUP id="{61A8409A-BAE9-37D0-43FC-54E583B1D234}" name="cbmp">

@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0422F902AD212810AEC84012 /* include_juce_audio_basics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 61BC88CC29248C8CF8FFC56D /* include_juce_audio_basics.mm */; };
-		0DF0E7C82CA2659A004CD901 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DF0E7C72CA26592004CD901 /* libcurl.tbd */; };
 		2ADFAD0ED05876E7EE12F637 /* RecentFilesMenuTemplate.nib in Resources */ = {isa = PBXBuildFile; fileRef = 38FBF152D7262F779577856C /* RecentFilesMenuTemplate.nib */; };
 		4462854CBC39AFCAAB3F38A4 /* BinaryData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4022D1916CE3443A77776B09 /* BinaryData.cpp */; };
+		52811C372CA3083100EC75D2 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52811C362CA307C400EC75D2 /* libcurl.tbd */; };
 		685D4C99A2226A046CFC0B02 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0ABED8544E684A4E1623F78 /* Accelerate.framework */; };
 		6F3F8E570009C7D2F1F05269 /* include_juce_core.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39CCE9A6B88A9B016FB8F930 /* include_juce_core.mm */; };
 		7381F9C5651A4E53FA088E83 /* cbmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A5BCE135B174DA25BB39D04 /* cbmp.c */; };
@@ -22,28 +22,28 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0DF0E7C72CA26592004CD901 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		11E991C7A40EC57E228AD38C /* GUI.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GUI.hpp; path = ../../Source/GUI.hpp; sourceTree = SOURCE_ROOT; };
 		1BFCEC29CA1850E5ECCC99B2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		276655A60EC2DCF5FAEA1D32 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text.txt; name = CMakeLists.txt; path = ../../Source/cbmp/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		2DAB93E08C8A2E8682EC1DC5 /* BinaryData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BinaryData.h; path = ../../JuceLibraryCode/BinaryData.h; sourceTree = SOURCE_ROOT; };
-		35F3B2B82790FBA7EACEE608 /* juce_core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_core; path = /Users/syrofullerton/JUCE/modules/juce_core; sourceTree = "<absolute>"; };
 		38FBF152D7262F779577856C /* RecentFilesMenuTemplate.nib */ = {isa = PBXFileReference; lastKnownFileType = file.nib; path = RecentFilesMenuTemplate.nib; sourceTree = SOURCE_ROOT; };
 		39CCE9A6B88A9B016FB8F930 /* include_juce_core.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_core.mm; path = ../../JuceLibraryCode/include_juce_core.mm; sourceTree = SOURCE_ROOT; };
 		4022D1916CE3443A77776B09 /* BinaryData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BinaryData.cpp; path = ../../JuceLibraryCode/BinaryData.cpp; sourceTree = SOURCE_ROOT; };
 		473CB3FE3185AECF7B16B1BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		52811C362CA307C400EC75D2 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		61BC88CC29248C8CF8FFC56D /* include_juce_audio_basics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_basics.mm; path = ../../JuceLibraryCode/include_juce_audio_basics.mm; sourceTree = SOURCE_ROOT; };
 		73EB78A1BB567700E188D8C2 /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = ../../Source/Main.cpp; sourceTree = SOURCE_ROOT; };
 		789215325DA7609A94E75097 /* API.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = API.h; path = ../../Source/API.h; sourceTree = SOURCE_ROOT; };
 		83ABBA5E79E451F326BC4480 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = utils.h; path = ../../Source/utils.h; sourceTree = SOURCE_ROOT; };
-		8A5BCE135B174DA25BB39D04 /* cbmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = cbmp.c; path = ../../Source/cbmp/cbmp.c; sourceTree = SOURCE_ROOT; };
+		8A5BCE135B174DA25BB39D04 /* cbmp.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = cbmp.c; path = ../../Source/cbmp/cbmp.c; sourceTree = SOURCE_ROOT; };
 		AAADC9573BB7F8DE042A739A /* cbmp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cbmp.h; path = ../../Source/cbmp/cbmp.h; sourceTree = SOURCE_ROOT; };
 		B0ABED8544E684A4E1623F78 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		C3D3FC545018B6CF8F337800 /* Midi.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Midi.hpp; path = ../../Source/Midi.hpp; sourceTree = SOURCE_ROOT; };
 		C6F46EF80D8D5BA56C6128B8 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		CC25575A15F4EEAB46FC7BFC /* juce_audio_basics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_basics; path = /Users/syro/Downloads/JUCE/modules/juce_audio_basics; sourceTree = "<absolute>"; };
 		D0AC29AFA3370A3188DD2D4D /* JuceHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JuceHeader.h; path = ../../JuceLibraryCode/JuceHeader.h; sourceTree = SOURCE_ROOT; };
+		DF65BC0E381929AD8FBA0423 /* juce_core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_core; path = /Users/syro/Downloads/JUCE/modules/juce_core; sourceTree = "<absolute>"; };
 		EADE58C3E07EA407E4485826 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		F120E9DDB84ADBEE7D1F9663 /* juce_audio_basics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_basics; path = /Users/syrofullerton/JUCE/modules/juce_audio_basics; sourceTree = "<absolute>"; };
 		F1F4F59EC610B2D993FBE4F9 /* WeatherWav */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WeatherWav; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -52,9 +52,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0DF0E7C82CA2659A004CD901 /* libcurl.tbd in Frameworks */,
 				685D4C99A2226A046CFC0B02 /* Accelerate.framework in Frameworks */,
 				AE547A13BFCCEFD4F37B54FE /* Cocoa.framework in Frameworks */,
+				52811C372CA3083100EC75D2 /* libcurl.tbd in Frameworks */,
 				FBDB0807ABDD2D319302DD51 /* Foundation.framework in Frameworks */,
 				C0E26C3E2AEDC42E1E7E69CA /* IOKit.framework in Frameworks */,
 				78D9E2617F59CBCB9717052E /* Security.framework in Frameworks */,
@@ -67,7 +67,7 @@
 		1F682246E93661560C444CAC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0DF0E7C72CA26592004CD901 /* libcurl.tbd */,
+				52811C362CA307C400EC75D2 /* libcurl.tbd */,
 				B0ABED8544E684A4E1623F78 /* Accelerate.framework */,
 				C6F46EF80D8D5BA56C6128B8 /* Cocoa.framework */,
 				473CB3FE3185AECF7B16B1BF /* Foundation.framework */,
@@ -144,8 +144,8 @@
 		D7C9631D6773A97CA74DCD65 /* JUCE Modules */ = {
 			isa = PBXGroup;
 			children = (
-				F120E9DDB84ADBEE7D1F9663 /* juce_audio_basics */,
-				35F3B2B82790FBA7EACEE608 /* juce_core */,
+				CC25575A15F4EEAB46FC7BFC /* juce_audio_basics */,
+				DF65BC0E381929AD8FBA0423 /* juce_core */,
 			);
 			name = "JUCE Modules";
 			sourceTree = "<group>";
@@ -256,7 +256,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_C_LANGUAGE_STANDARD = c17;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -304,7 +304,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_C_LANGUAGE_STANDARD = c17;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -343,7 +343,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_DEBUG=1",
 					"DEBUG=1",
-					"JUCE_DISPLAY_SPLASH_SCREEN=0",
+					"JUCE_DISPLAY_SPLASH_SCREEN=1",
 					"JUCE_USE_DARK_SPLASH_SCREEN=1",
 					"JUCE_PROJUCER_VERSION=0x7000c",
 					"JUCE_MODULE_AVAILABLE_juce_audio_basics=1",
@@ -366,13 +366,13 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../JuceLibraryCode",
-					/Users/syrofullerton/JUCE/modules,
-					"/opt/homebrew/Cellar/nlohmann-json/3.11.3/include",
+					/Users/syro/Downloads/JUCE/modules,
 					"$(inherited)",
+					"/opt/homebrew/Cellar/nlohmann-json/3.11.3/include",
 				);
 				INSTALL_PATH = /usr/bin;
-				MACOSX_DEPLOYMENT_TARGET = 14.4;
-				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syrofullerton/JUCE/modules /opt/homebrew/Cellar/nlohmann-json/3.11.3/include";
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syro/Downloads/JUCE/modules /opt/homebrew/Cellar/nlohmann-json/3.11.3/include";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.WeatherWav;
 				PRODUCT_NAME = WeatherWav;
 				USE_HEADERMAP = NO;
@@ -395,7 +395,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_NDEBUG=1",
 					"NDEBUG=1",
-					"JUCE_DISPLAY_SPLASH_SCREEN=0",
+					"JUCE_DISPLAY_SPLASH_SCREEN=1",
 					"JUCE_USE_DARK_SPLASH_SCREEN=1",
 					"JUCE_PROJUCER_VERSION=0x7000c",
 					"JUCE_MODULE_AVAILABLE_juce_audio_basics=1",
@@ -418,14 +418,14 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../JuceLibraryCode",
-					/Users/syrofullerton/JUCE/modules,
-					"/opt/homebrew/Cellar/nlohmann-json/3.11.3/include",
+					/Users/syro/Downloads/JUCE/modules,
 					"$(inherited)",
+					"/opt/homebrew/Cellar/nlohmann-json/3.11.3/include",
 				);
 				INSTALL_PATH = /usr/bin;
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.4;
-				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syrofullerton/JUCE/modules /opt/homebrew/Cellar/nlohmann-json/3.11.3/include";
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syro/Downloads/JUCE/modules /opt/homebrew/Cellar/nlohmann-json/3.11.3/include";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.WeatherWav;
 				PRODUCT_NAME = WeatherWav;
 				USE_HEADERMAP = NO;

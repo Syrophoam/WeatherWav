@@ -3,59 +3,37 @@
 #include <string.h>
 #include <vector>
 #include <JuceHeader.h>
-#include <nlohmann/json.hpp> 
+#include <nlohmann/json.hpp>
+#include <limits>
   
-double lerp(double a, double b, double interp){
-    interp = pow(interp, 2);
+double lerp(double a, double b, double interp, bool isUp){
+    if(isUp){
+        interp = pow(interp, .5);
+    }else{
+        interp = pow(interp, 2);
+    }
     return (((b*2*interp)+(a*-2*interp))/2) + a;
 }
 
-std::vector<double> normalizeValues(nlohmann::json values){
-    
-    unsigned long size = values.size();
-    
-    double max = 0;
-    double min = 99999999999; // any large number
-    
-    for(int i = 0; i < size; i++){
-        double buff = values[i];
-        
-        if(buff > max){
-            max = buff;
-        }
-        if(buff < min){
-            min = buff;
-        }
-    }
-    double delta = max - min;
-    
-    std::vector<double> normalizedValues(size);
-    double normVal = 0;
-    for (int i = 0; i < size; i++) {
-        
-        normVal = double(values[i]) - min;
-        normalizedValues[i] = normVal / delta;
-        
-    }
-    return normalizedValues;
-    
-}
 
-juce::MidiMessageSequence writeSequence(std::vector<double> values, int numOfValues){
+juce::MidiMessageSequence writeSequence(std::vector<double> values){
     
     juce::MidiMessage ccMsg;
     juce::MidiMessageSequence seq;
     int ticks = 96 ;
+    int numValues = values.size();
     
-    for (int j = 0; j < numOfValues; j++) {
+    for (int j = 0; j < numValues; j++) {
         
         double val1 = values[j];
-        double val2 = values[(j+1)%numOfValues];
+        double val2 = values[(j+1)%numValues];
+        bool isUp = val1 < val2;
          
-        for (int i = 0; i < (ticks*numOfValues); i++) {
+        for (int i = 0; i < (ticks*numValues); i++) {
             ccMsg =
-            ccMsg.controllerEvent(1, 11, uint8_t(lerp(val1, val2, double(i)/(double(ticks)*double(numOfValues)) ) * 127) );
-            ccMsg.addToTimeStamp(i + (j*ticks*numOfValues));
+            ccMsg.controllerEvent(1, 11,
+                                  uint8_t(lerp(val1, val2, double(i)/(double(ticks)*double(numValues)),isUp ) ) );
+            ccMsg.addToTimeStamp(i + (j*ticks*numValues));
             seq.addEvent(ccMsg);
         }
     }
