@@ -9,6 +9,7 @@ struct pixelData{
     uint8_t r;
     uint8_t g;
     uint8_t b;
+    uint8_t a;
 };
 
 struct vec2 {
@@ -71,6 +72,7 @@ std::vector<std::vector<pixelData>> getImageData(BMP *bmpImage, int width, int h
     unsigned char r;
     unsigned char g;
     unsigned char b;
+    unsigned char a;
     int index = 0;
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
@@ -81,9 +83,11 @@ std::vector<std::vector<pixelData>> getImageData(BMP *bmpImage, int width, int h
             r = bmpImage->pixels[index].red;
             g = bmpImage->pixels[index].green;
             b = bmpImage->pixels[index].blue;
+            a = bmpImage->pixels[index].alpha;
             pixDatVec[i][j].r = r;
             pixDatVec[i][j].g = g;
             pixDatVec[i][j].b = b;
+            pixDatVec[i][j].a = a;
         }
     }
     return pixDatVec;
@@ -102,7 +106,7 @@ void setTransform(double scaleX, double scaleY, int transX, int transY){
 }
 
 std::string bitMapView(
-                 int height, int width, std::vector<std::vector<pixelData>> pixDat ,double scale){
+                 int height, int width, std::vector<std::vector<pixelData>> pixDat,int colour ,double scale){
     std::string frame;
     int row = ws.ws_row;
     int col = ws.ws_col;
@@ -113,17 +117,45 @@ std::string bitMapView(
         uvY /= aspectRatio;
         uvY *= height;
         
-
         for (int j = 0; j < col; j++) { // width
             double uvX = double(j) / double(col);
             uvX *= aspectRatio;
             uvX *= width;
             
-            int pixVal = pixDat[uvX][uvY].r;
-            pixVal = double(pixVal)/(256.f/5.f);
+            double pixVal;
             
-            frame += blockScale[pixVal%5];
-
+            switch (colour) {
+                case 0:{
+                    pixVal = pixDat[uvX][uvY].r;
+                    break;
+                }
+                case 1:{
+                    pixVal = pixDat[uvX][uvY].g;
+                    break;
+                }
+                case 2:{
+                    pixVal = pixDat[uvX][uvY].b;
+                    break;
+                }
+                case 3:{
+                    pixVal = pixDat[uvX][uvY].a;
+                    break;
+                }
+                    
+                default:
+                    break;
+            }
+            
+            pixVal = double(pixVal)/(256.f);
+            
+            int random = rand()%100;
+            
+            if(random > 20){
+                frame += blockScale[int(pixVal*5)];
+            }else{
+                frame += grayScale[int(pixVal*66)];
+            }
+            
         }
         frame += '\n';
     }

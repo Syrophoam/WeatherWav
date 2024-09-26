@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "cbmp.h"
-#include <cstdlib>
-#include <string>
+//#include <cstdlib>
+#include <string.h>
 
 // Constants
 

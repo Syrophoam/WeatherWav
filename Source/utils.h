@@ -7,11 +7,6 @@
 //#include "API.h" 
 
 
-void waitFrame(){
-    struct timespec tim;
-    tim.tv_nsec = 50'000'000;
-    nanosleep(&tim, NULL);
-}
 
 std::vector<double> normalizeValues(nlohmann::json values){
     

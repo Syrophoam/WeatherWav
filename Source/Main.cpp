@@ -3,19 +3,54 @@
 #include "GUI.hpp"
 #include "utils.h"
 #include "API.h"
+#include "audio.hpp"
 #include "cbmp/cbmp.h"
-#include <chrono>
 #include <nlohmann/json.hpp>  
 #include <curl/curl.h>
 #include <curses.h>
+#include <chrono>
 
 #define METSERVICE 1
 #define OPENWEATHER 2
+
+#define RED 0
+#define GREEN 1
+#define BLUE 2
+#define ALPHA 3
 
 // KR coordinates
 
  // -41.298665, 174.775490
 
+// terminal dimensions for images = 560 × 336
+
+std::string lon = "0";
+std::string lat = "0"; // input
+double      longitude, latitude = 0; // input to string
+
+struct image {
+    imgData imgStruct;
+    std::vector<std::vector<pixelData>> imgData;
+    int width;
+    int height;
+};
+
+void loadImage(std::string imageFileName, struct image &imgStrct){
+    imgData img;
+    imageFileName += ".bmp";
+    
+    loadImage(imageFileName.data(), &img);
+    
+    std::vector<std::vector<pixelData>> imgDat(img.width,std::vector<pixelData>(img.height));
+    imgDat = getImageData(img.bmp, img.width, img.height);
+    
+    imgStrct.imgStruct = img;
+    imgStrct.width = img.width;
+    imgStrct.height = img.height;
+    imgStrct.imgData = imgDat;
+
+    bclose(img.bmp);
+}
 
 int main(){
     bool running = true;
@@ -29,33 +64,75 @@ int main(){
     
     //----- GUI ------//
     initGUI();
-
-    imgData logo;
-    loadImage("Logo.bmp", &logo); 
     
-    std::vector<std::vector<pixelData>> logodata(logo.width,std::vector<pixelData>(logo.height));
-    logodata = getImageData(logo.bmp, logo.width, logo.height);
+    image logo;
+    loadImage("Logo", logo);
     
-    bclose(logo.bmp);
+    image map;
+    loadImage("map", map);
     
+    image multi;
+    loadImage("multi", multi);
+    
+    
+    unsigned long currentFrame = 0;
     unsigned long frameCounter = 0;
     while (running) {
         updateGUI();
         setTransform(1., 1., frameCounter%logo.width, 0.);
         
-        std::string frame;
+        switch (currentFrame) {
+            case 0:{
+                std::string init;
+                //width & height are the wrong way around but works
+                init = bitMapView(logo.width, logo.height, logo.imgData, 0,1.f);
+                std::cout << init;
+                currentFrame = 1;
+                break;
+            }
+            case 1:{
+                std::string logoFrame;
+                logoFrame = bitMapView(logo.width, logo.height, logo.imgData, 0,1.f);
+                std::cout << logoFrame;
+                if (frameCounter > 30) {
+                    currentFrame = 2;
+                }
+                break;
+            }
+                
+            case 2:{
+                std::string multiFrame;
+                multiFrame = bitMapView(multi.width, multi.height, multi.imgData, frameCounter%3,1.f);
+                std::cout<< multiFrame;
+                if (frameCounter > 60) {
+                    currentFrame = 3;
+                }
+                break;
+            }
+            case 3:{
+                std::string map_s;
+                map_s = bitMapView(map.width, map.height, map.imgData, 0,1.f);
+                std::cout << map_s;
+                std::cout << "Longitude ?";
+                std::cin >> lon;
+                std::cout << "Lattitude ?";
+                std::cin >> lat;
+                currentFrame = 4;
+                running = false;
+                break;
+            }
+                
+            default:
+                break;
+        }
         
-        //width & height are the wrong way around but works
-        frame = bitMapView(logo.width, logo.height, logodata, 1.f);
-        std::cout << frame;
-        frameCounter ++;
-        
-        struct timespec tim;
-        tim.tv_nsec = 50'000'000;
-        nanosleep(&tim, NULL);
+        struct timespec tim; tim.tv_nsec = 50'000'000; nanosleep(&tim, NULL);
+        frameCounter++;
         running = false;
-        
     }
+    
+//    longitude = std::stod(lon);
+//    latitude = std::stod(lat);
     
     //----- JSON - send ------//
     std::map pos = std::map<std::string,float>{
@@ -68,8 +145,13 @@ int main(){
     
     std::string keyOW = "0f7dae7414bfba2cbd826fc5c6b04dd6";
     std::string openWeather;
-    openWeather = "https://api.openweathermap.org/data/2.5/weather?lat=-41.29&lon=174.77&appid=";
-    openWeather = "api.openweathermap.org/data/2.5/forecast?lat=-41.29&lon=174.77&appid=";
+    //openWeather = "api.openweathermap.org/data/2.5/forecast?lat=-41.29&lon=174.77&appid=";
+    openWeather = "api.openweathermap.org/data/2.5/forecast?lat=";
+    openWeather += lat;
+    openWeather += "&lon=";
+    openWeather += lon;
+    openWeather += "&appid=";
+    
     openWeather += keyOW;
     
     //----- CURL ------//
@@ -168,11 +250,24 @@ int main(){
     
     std::remove(midiPath_S.data());
     juce::MidiFile midiFile;
-    midiFile.setTicksPerQuarterNote(96);
+    midiFile.setTicksPerQuarterNote(96*3);
+    
+    writeSequence(OWVec.visibility, "visibility", midiFile); 
+    writeSequence(OWVec.pop, "probability of rain", midiFile);
+    writeSequence(OWVec.temp, "temp", midiFile);
+    writeSequence(OWVec.temp_min, "temp Min", midiFile);
+    writeSequence(OWVec.temp_max, "temp Max", midiFile);
+    writeSequence(OWVec.feels_like, "feels like", midiFile);
+    writeSequence(OWVec.pressure, "pressure", midiFile);
+    writeSequence(OWVec.sea_level, "seaLevel", midiFile);
+    writeSequence(OWVec.grnd_level, "ground level", midiFile);
+    writeSequence(OWVec.humidity, "humidity", midiFile);
+    writeSequence(OWVec.clouds, "clouds", midiFile);
+    writeSequence(OWVec.windDeg, "wind direction", midiFile);
+    writeSequence(OWVec.windGust, "wind gust", midiFile);
+    writeSequence(OWVec.rain3h, "rain", midiFile);
+    writeSequence(OWVec.snow3h, "snow", midiFile);
 
-    juce::MidiMessageSequence funcSeq = writeSequence(OWVec.windSpeed);
-
-    midiFile.addTrack(funcSeq);
     juce::FileOutputStream stream = juce::File(midiPath_S.data());
     midiFile.writeTo(stream);
     

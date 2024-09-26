@@ -10,7 +10,7 @@
 		0422F902AD212810AEC84012 /* include_juce_audio_basics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 61BC88CC29248C8CF8FFC56D /* include_juce_audio_basics.mm */; };
 		2ADFAD0ED05876E7EE12F637 /* RecentFilesMenuTemplate.nib in Resources */ = {isa = PBXBuildFile; fileRef = 38FBF152D7262F779577856C /* RecentFilesMenuTemplate.nib */; };
 		4462854CBC39AFCAAB3F38A4 /* BinaryData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4022D1916CE3443A77776B09 /* BinaryData.cpp */; };
-		52811C372CA3083100EC75D2 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52811C362CA307C400EC75D2 /* libcurl.tbd */; };
+		52811C392CA3D90D00EC75D2 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52811C382CA3D8F100EC75D2 /* libcurl.tbd */; };
 		685D4C99A2226A046CFC0B02 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0ABED8544E684A4E1623F78 /* Accelerate.framework */; };
 		6F3F8E570009C7D2F1F05269 /* include_juce_core.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39CCE9A6B88A9B016FB8F930 /* include_juce_core.mm */; };
 		7381F9C5651A4E53FA088E83 /* cbmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A5BCE135B174DA25BB39D04 /* cbmp.c */; };
@@ -30,12 +30,13 @@
 		39CCE9A6B88A9B016FB8F930 /* include_juce_core.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_core.mm; path = ../../JuceLibraryCode/include_juce_core.mm; sourceTree = SOURCE_ROOT; };
 		4022D1916CE3443A77776B09 /* BinaryData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BinaryData.cpp; path = ../../JuceLibraryCode/BinaryData.cpp; sourceTree = SOURCE_ROOT; };
 		473CB3FE3185AECF7B16B1BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		52811C362CA307C400EC75D2 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
+		52811C382CA3D8F100EC75D2 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
+		52811C3B2CA53A8B00EC75D2 /* audio.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = audio.hpp; path = ../../Source/audio.hpp; sourceTree = "<group>"; };
 		61BC88CC29248C8CF8FFC56D /* include_juce_audio_basics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_basics.mm; path = ../../JuceLibraryCode/include_juce_audio_basics.mm; sourceTree = SOURCE_ROOT; };
 		73EB78A1BB567700E188D8C2 /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = ../../Source/Main.cpp; sourceTree = SOURCE_ROOT; };
 		789215325DA7609A94E75097 /* API.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = API.h; path = ../../Source/API.h; sourceTree = SOURCE_ROOT; };
 		83ABBA5E79E451F326BC4480 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = utils.h; path = ../../Source/utils.h; sourceTree = SOURCE_ROOT; };
-		8A5BCE135B174DA25BB39D04 /* cbmp.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = cbmp.c; path = ../../Source/cbmp/cbmp.c; sourceTree = SOURCE_ROOT; };
+		8A5BCE135B174DA25BB39D04 /* cbmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = cbmp.c; path = ../../Source/cbmp/cbmp.c; sourceTree = SOURCE_ROOT; };
 		AAADC9573BB7F8DE042A739A /* cbmp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = cbmp.h; path = ../../Source/cbmp/cbmp.h; sourceTree = SOURCE_ROOT; };
 		B0ABED8544E684A4E1623F78 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		C3D3FC545018B6CF8F337800 /* Midi.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Midi.hpp; path = ../../Source/Midi.hpp; sourceTree = SOURCE_ROOT; };
@@ -52,9 +53,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52811C392CA3D90D00EC75D2 /* libcurl.tbd in Frameworks */,
 				685D4C99A2226A046CFC0B02 /* Accelerate.framework in Frameworks */,
 				AE547A13BFCCEFD4F37B54FE /* Cocoa.framework in Frameworks */,
-				52811C372CA3083100EC75D2 /* libcurl.tbd in Frameworks */,
 				FBDB0807ABDD2D319302DD51 /* Foundation.framework in Frameworks */,
 				C0E26C3E2AEDC42E1E7E69CA /* IOKit.framework in Frameworks */,
 				78D9E2617F59CBCB9717052E /* Security.framework in Frameworks */,
@@ -67,7 +68,7 @@
 		1F682246E93661560C444CAC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				52811C362CA307C400EC75D2 /* libcurl.tbd */,
+				52811C382CA3D8F100EC75D2 /* libcurl.tbd */,
 				B0ABED8544E684A4E1623F78 /* Accelerate.framework */,
 				C6F46EF80D8D5BA56C6128B8 /* Cocoa.framework */,
 				473CB3FE3185AECF7B16B1BF /* Foundation.framework */,
@@ -125,6 +126,7 @@
 				73EB78A1BB567700E188D8C2 /* Main.cpp */,
 				C3D3FC545018B6CF8F337800 /* Midi.hpp */,
 				83ABBA5E79E451F326BC4480 /* utils.h */,
+				52811C3B2CA53A8B00EC75D2 /* audio.hpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -256,7 +258,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				GCC_C_LANGUAGE_STANDARD = c17;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -304,7 +306,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				GCC_C_LANGUAGE_STANDARD = c17;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -371,7 +373,7 @@
 					"/opt/homebrew/Cellar/nlohmann-json/3.11.3/include",
 				);
 				INSTALL_PATH = /usr/bin;
-				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syro/Downloads/JUCE/modules /opt/homebrew/Cellar/nlohmann-json/3.11.3/include";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.WeatherWav;
 				PRODUCT_NAME = WeatherWav;
@@ -424,7 +426,7 @@
 				);
 				INSTALL_PATH = /usr/bin;
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syro/Downloads/JUCE/modules /opt/homebrew/Cellar/nlohmann-json/3.11.3/include";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.WeatherWav;
 				PRODUCT_NAME = WeatherWav;
