@@ -10,7 +10,8 @@
 		0422F902AD212810AEC84012 /* include_juce_audio_basics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 61BC88CC29248C8CF8FFC56D /* include_juce_audio_basics.mm */; };
 		2ADFAD0ED05876E7EE12F637 /* RecentFilesMenuTemplate.nib in Resources */ = {isa = PBXBuildFile; fileRef = 38FBF152D7262F779577856C /* RecentFilesMenuTemplate.nib */; };
 		4462854CBC39AFCAAB3F38A4 /* BinaryData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4022D1916CE3443A77776B09 /* BinaryData.cpp */; };
-		52811C392CA3D90D00EC75D2 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52811C382CA3D8F100EC75D2 /* libcurl.tbd */; };
+		52811C3D2CA6351900EC75D2 /* libcurl.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 52811C3C2CA6351900EC75D2 /* libcurl.4.dylib */; };
+		52811C3E2CA6351900EC75D2 /* libcurl.4.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 52811C3C2CA6351900EC75D2 /* libcurl.4.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		685D4C99A2226A046CFC0B02 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0ABED8544E684A4E1623F78 /* Accelerate.framework */; };
 		6F3F8E570009C7D2F1F05269 /* include_juce_core.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39CCE9A6B88A9B016FB8F930 /* include_juce_core.mm */; };
 		7381F9C5651A4E53FA088E83 /* cbmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A5BCE135B174DA25BB39D04 /* cbmp.c */; };
@@ -20,6 +21,20 @@
 		C0E26C3E2AEDC42E1E7E69CA /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BFCEC29CA1850E5ECCC99B2 /* IOKit.framework */; };
 		FBDB0807ABDD2D319302DD51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 473CB3FE3185AECF7B16B1BF /* Foundation.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		52811C3F2CA6351900EC75D2 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				52811C3E2CA6351900EC75D2 /* libcurl.4.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		11E991C7A40EC57E228AD38C /* GUI.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GUI.hpp; path = ../../Source/GUI.hpp; sourceTree = SOURCE_ROOT; };
@@ -32,6 +47,7 @@
 		473CB3FE3185AECF7B16B1BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		52811C382CA3D8F100EC75D2 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		52811C3B2CA53A8B00EC75D2 /* audio.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = audio.hpp; path = ../../Source/audio.hpp; sourceTree = "<group>"; };
+		52811C3C2CA6351900EC75D2 /* libcurl.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.4.dylib; path = ../../../../../opt/homebrew/Cellar/curl/8.10.1/lib/libcurl.4.dylib; sourceTree = "<group>"; };
 		61BC88CC29248C8CF8FFC56D /* include_juce_audio_basics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_basics.mm; path = ../../JuceLibraryCode/include_juce_audio_basics.mm; sourceTree = SOURCE_ROOT; };
 		73EB78A1BB567700E188D8C2 /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = ../../Source/Main.cpp; sourceTree = SOURCE_ROOT; };
 		789215325DA7609A94E75097 /* API.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = API.h; path = ../../Source/API.h; sourceTree = SOURCE_ROOT; };
@@ -53,7 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52811C392CA3D90D00EC75D2 /* libcurl.tbd in Frameworks */,
+				52811C3D2CA6351900EC75D2 /* libcurl.4.dylib in Frameworks */,
 				685D4C99A2226A046CFC0B02 /* Accelerate.framework in Frameworks */,
 				AE547A13BFCCEFD4F37B54FE /* Cocoa.framework in Frameworks */,
 				FBDB0807ABDD2D319302DD51 /* Foundation.framework in Frameworks */,
@@ -68,6 +84,7 @@
 		1F682246E93661560C444CAC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				52811C3C2CA6351900EC75D2 /* libcurl.4.dylib */,
 				52811C382CA3D8F100EC75D2 /* libcurl.tbd */,
 				B0ABED8544E684A4E1623F78 /* Accelerate.framework */,
 				C6F46EF80D8D5BA56C6128B8 /* Cocoa.framework */,
@@ -170,6 +187,7 @@
 				6ECCA80F762345FDF7AE3E8B /* Resources */,
 				23320E6DF728D8A72EEC673F /* Sources */,
 				2E326B0D9C06A95CC3E2C7B1 /* Frameworks */,
+				52811C3F2CA6351900EC75D2 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -373,6 +391,10 @@
 					"/opt/homebrew/Cellar/nlohmann-json/3.11.3/include",
 				);
 				INSTALL_PATH = /usr/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/homebrew/Cellar/curl/8.10.1/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syro/Downloads/JUCE/modules /opt/homebrew/Cellar/nlohmann-json/3.11.3/include";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.WeatherWav;
@@ -425,6 +447,10 @@
 					"/opt/homebrew/Cellar/nlohmann-json/3.11.3/include",
 				);
 				INSTALL_PATH = /usr/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/homebrew/Cellar/curl/8.10.1/lib,
+				);
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syro/Downloads/JUCE/modules /opt/homebrew/Cellar/nlohmann-json/3.11.3/include";
