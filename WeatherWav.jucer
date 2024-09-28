@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="pyzw5w" name="WeatherWav" projectType="consoleapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" cppLanguageStandard="20"
-              headerPath="/opt/homebrew/Cellar/nlohmann-json/3.11.3/include"
+              headerPath="/opt/homebrew/Cellar/nlohmann-json/3.11.3/include&#10;/opt/homebrew/Cellar/curl/8.10.1/include&#10;/opt/homebrew/Cellar/glfw/3.4/include&#10;"
               displaySplashScreen="1">
   <MAINGROUP id="amn1OH" name="WeatherWav">
     <GROUP id="{E46A885E-CAFE-0C58-77F2-06CA6A6086AC}" name="Source">
@@ -20,7 +20,17 @@
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
@@ -33,6 +43,16 @@
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../modules"/>
         <MODULEPATH id="juce_core" path="../../modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../Downloads/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../Downloads/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
   </EXPORTFORMATS>

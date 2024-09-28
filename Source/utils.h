@@ -33,6 +33,7 @@ std::vector<double> normalizeValues(nlohmann::json values){
         
         normVal = double(values[i]) - min;
         normalizedValues[i] = normVal / delta;
+        normalizedValues[i] *= 127;
     }
     return normalizedValues;
 }

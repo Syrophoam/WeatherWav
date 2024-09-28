@@ -21,9 +21,9 @@ double lerp(double a, double b, double interp, bool isUp){
 void writeSequence(std::vector<double> values, juce::StringRef name,juce::MidiFile &file){
     
     juce::MidiMessage ccMsg;
-    juce::MidiMessageSequence seq;
+    juce::MidiMessageSequence seq; 
     int ticks = 96 ;
-    int numValues = values.size();
+    unsigned long numValues = values.size();
     
     for (int j = 0; j < numValues; j++) {
         
@@ -38,7 +38,7 @@ void writeSequence(std::vector<double> values, juce::StringRef name,juce::MidiFi
             ccMsg.addToTimeStamp(i + (j*ticks*numValues));
             seq.addEvent(ccMsg);
         }
-    }
+    } 
     juce::MidiMessage nameEvent = juce::MidiMessage::textMetaEvent(3, name);
     seq.addEvent(nameEvent);
     
