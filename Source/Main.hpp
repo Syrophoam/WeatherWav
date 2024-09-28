@@ -6,11 +6,7 @@
 #include "cbmp/cbmp.h"
 #include <nlohmann/json.hpp>  
 #include <curl/curl.h>
-//#include <OpenGL/OpenGL.h>
-//#include <glfw3.h>
 #include <thread>
-//#include <GLFW/glfw3.h> // cant use with juce, thread issues
-
 #include <curses.h>
 #include <chrono>
 
@@ -26,10 +22,10 @@
 #define CONSOLEHEIGHT 48
 
 // KR coordinates
-
  // -41.298665, 174.775490
 
-// terminal dimensions for images = 560 × 336
+// terminal dimensions for images 
+// 560 × 336
 
 std::string lon = "174.775490";
 std::string lat = "-41.298665"; // input
@@ -60,9 +56,7 @@ void loadImage(std::string imageFileName, struct image &imgStrct){
     bclose(img.bmp);
 } 
 
-
-
-int mainFunc(){ // juce bullshit
+int mainFunc(){
     
     // ----- Audio ----- //
 
@@ -76,23 +70,9 @@ int mainFunc(){ // juce bullshit
     path += "/WeatherWav/Media/";
     
     int weatherService = 0;
-    weatherService = METSERVICE;
+    weatherService = OPENWEATHER;
     
-    // ----- GLFW ----- //
-//    
-//    glfwInit();
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-//    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-//    
-//    GLFWwindow* window = glfwCreateWindow(30, 30, "Weather Sonifier", NULL, NULL);
-//    
-//    if (window == NULL) {
-//        return 5;
-//    }
 
-    
     //----- GUI ------//
     struct winsize ws;
     initGUI(ws);
@@ -114,12 +94,12 @@ int mainFunc(){ // juce bullshit
     image empty;
     loadImage("empty", empty);
     
-    long currentFrame = 5;
+    long currentFrame = 0;
 //    currentFrame = -1;
     long frameCounter = 0;
     std::vector<int> inputPosition = {ws.ws_col/2,ws.ws_row/2};
     
-    while (!running) {
+    while (running) {
         std::string init;
         std::string logoFrame;
         std::string multiFrame; 
@@ -211,6 +191,7 @@ int mainFunc(){ // juce bullshit
 //                if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 //                    inputPosition[0] += 2;
 //                }
+                //reimplement with juce keyboard input
                 
                 std::string map_s;
                 map_s = bitMapView(map.width, map.height, map.imgData, 0,1.f);
@@ -293,7 +274,7 @@ int mainFunc(){ // juce bullshit
         curl_easy_setopt(handle, CURLOPT_URL, "https://forecast-v2.metoceanapi.com/point/time");
     
     if (weatherService == OPENWEATHER)
-        curl_easy_setopt(handle, CURLOPT_URL, openWeather.c_str());
+        curl_easy_setopt(handle, CURLOPT_URL, openWeather.data());
     
     curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, &data);
@@ -310,7 +291,7 @@ int mainFunc(){ // juce bullshit
         curl_easy_setopt(handle, CURLOPT_POSTFIELDS, jsonString.c_str());
     }
 
-       res = curl_easy_perform(handle);   
+       res = curl_easy_perform(handle);    
       
     long *expectedSizeOfResponse;
     if (!res) {
@@ -324,18 +305,22 @@ int mainFunc(){ // juce bullshit
     curl_easy_cleanup(handle); 
     
 //    char* dat = data;
-    printf("Page data:\n\n%s\n", data);
+//    printf("Page data:\n\n%s\n", data);
     if (std::string(data).length() < xpctsize) {
         return 9;  
     }
- 
+    std::string testdat = std::string(data);
     //----- JSON - Recieve ------//
-    json jsonResponse;
+    
     
     json waveHeight;
     std::vector<double> values;
     if (weatherService == METSERVICE) {
+        json jsonResponse;
         jsonResponse = json::parse(data);
+        
+        std::ifstream jsonFile("/Users/syro/WeatherWav/Media/jsonformatter.json");
+//        jsonResponse = json::parse(jsonFile); // expected output, curl doesnt give the same string ??????????????..... it works now
   
         json variables = jsonResponse["variables"];
         waveHeight = variables["wave.height"]["data"];
@@ -346,14 +331,10 @@ int mainFunc(){ // juce bullshit
     struct openWeather OWVec;
     
     if (weatherService == OPENWEATHER) {
+        json jsonResponse;
         jsonResponse = json::parse(data);
+//        jsonResponse = json::f
   
-//        long sizeOfString = jsonResponse.dump().length();
-//        if (sizeOfString < long(expectedSizeOfResponse)) {
-//            printf("failed to download data");
-//            return 3;
-//        }
-        
         int count = jsonResponse["cnt"];
  
         OWVec.cityName = jsonResponse["city"]["name"];
@@ -382,7 +363,7 @@ int mainFunc(){ // juce bullshit
         normalizeResponseInt(OWVec.visibility);
     }
     
-//    free(data);// idk why this was here, mabye important? 
+    free(data);// idk why this was here, mabye important? 
     
     //----- MIDI ------//
     std::string midiPath_S = "/Users/syro/WeatherWav/Media/";

@@ -5,6 +5,12 @@
               headerPath="/opt/homebrew/Cellar/nlohmann-json/3.11.3/include&#10;/opt/homebrew/Cellar/curl/8.10.1/include&#10;/opt/homebrew/Cellar/glfw/3.4/include&#10;"
               displaySplashScreen="1">
   <MAINGROUP id="amn1OH" name="WeatherWav">
+    <GROUP id="{9C8A0210-11D2-942B-4EF4-B799978519B7}" name="audio">
+      <FILE id="mpOti5" name="audioMain.cpp" compile="1" resource="0" file="Source/audio/audioMain.cpp"/>
+      <FILE id="DzBGLM" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/audio/MainComponent.cpp"/>
+      <FILE id="z2cnJk" name="MainComponent.h" compile="0" resource="0" file="Source/audio/MainComponent.h"/>
+    </GROUP>
     <GROUP id="{E46A885E-CAFE-0C58-77F2-06CA6A6086AC}" name="Source">
       <GROUP id="{61A8409A-BAE9-37D0-43FC-54E583B1D234}" name="cbmp">
         <FILE id="e6AxkX" name="cbmp.c" compile="1" resource="0" file="Source/cbmp/cbmp.c"/>
@@ -13,9 +19,9 @@
       </GROUP>
       <FILE id="qtwziy" name="API.h" compile="0" resource="0" file="Source/API.h"/>
       <FILE id="iCymrP" name="GUI.hpp" compile="0" resource="0" file="Source/GUI.hpp"/>
-      <FILE id="Wlap4w" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="r8iirH" name="Midi.hpp" compile="0" resource="0" file="Source/Midi.hpp"/>
       <FILE id="xRm6ZD" name="utils.h" compile="0" resource="0" file="Source/utils.h"/>
+      <FILE id="y7DdEy" name="Main.hpp" compile="0" resource="0" file="Source/Main.hpp"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

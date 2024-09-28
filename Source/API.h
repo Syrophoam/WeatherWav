@@ -67,7 +67,7 @@ size_t CURLWriteFunction(void *ptr, size_t size, size_t nmemb, void* userData){
         *stringToWrite = static_cast<char*>(malloc(nmemb+1));
     }else{
         *stringToWrite = static_cast<char*>(realloc(*stringToWrite, size+nmemb+1));
-    }
+    } 
          
     memcpy(*stringToWrite+dataSize, input, nmemb);
     dataSize += nmemb;
@@ -108,6 +108,7 @@ json requestMS(std::map<std::string,float> pos, int repeats){ // metservice
 //void fillStruct(json data, openWeather strct[]){
     void fillStruct(json data, struct openWeather &OWVec, int size){
         
+        
         OWVec.dt.resize(size);
         OWVec.visibility.resize(size);
         OWVec.pop.resize(size);
@@ -132,6 +133,7 @@ json requestMS(std::map<std::string,float> pos, int repeats){ // metservice
         
         
     for(int i = 0; i < size; i++){
+        
         json list =             data["list"][i];
         
         OWVec.dt[i] =           list["dt"];
@@ -158,11 +160,8 @@ json requestMS(std::map<std::string,float> pos, int repeats){ // metservice
         
         OWVec.sysPod[i] =       list["sys"]["pod"];
         
-        nlohmann::json rain =   list["rain"];
-        
-        if(rain["3h"].is_null()){ 
-            printf("rainisnull");  
-        }
+        nlohmann::json rain =   list["rain"]; 
+
         
         if (!rain.is_null()){
             OWVec.rain3h[i] =   list["rain"]["3h"];
@@ -172,19 +171,12 @@ json requestMS(std::map<std::string,float> pos, int repeats){ // metservice
         
         nlohmann::json snow =   list["snow"];
         
-        if(snow.is_null()){
-            printf("snowisnull");
-        }
-        
         if (!snow.is_null()){
             OWVec.snow3h[i] =   list["snow"]["3h"];
         }else{
             OWVec.snow3h[i] = 0.f;
         }
-        
-//        OWVec.snow3h[i] = 0.f;
-//        OWVec.rain3h[i] = 0.f;
-        
+
     }
         
 }

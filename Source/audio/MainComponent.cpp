@@ -26,7 +26,7 @@ MainComponent::~MainComponent()
     // This shuts down the audio device and clears the audio source.
     shutdownAudio();
 }
-
+double sampleRateG;
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
@@ -37,6 +37,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     // but be careful - it will be called on the audio thread, not the GUI thread.
 
     // For more details, see the help for AudioProcessor::prepareToPlay()
+    sampleRateG = sampleRate;
 }
 
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
@@ -51,11 +52,14 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
     auto* leftBuffer  = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
     auto* rightBuffer = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
     
+    
     for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
             {
                 auto currentSample = double(sample)/double(bufferToFill.numSamples);
-                leftBuffer[sample]  = currentSample * 0.5;
-                rightBuffer[sample] = currentSample * 0.5;
+                 
+                double sin = std::sin((double(sample)*M_PI*2.f)/double(bufferToFill.numSamples));
+                leftBuffer[sample]  = sin ;
+                rightBuffer[sample] = sin ;
             }
     
 }
