@@ -3,7 +3,7 @@
 
 const char* grayScale[] = {"$","@","B","%","8","&","W","M","#","*","o","a","h","k","b","d","p","q","w","m","Z","O","0","Q","L","C","J","U","Y","X","z","c","v","u","n","x","r","j","f","t","/","|","(",")","1","{","}","[","]","?","-","_","+","~","<",">","i","!","l","I",";",":",",","^","`","."," "};
 
-const char* blockScale[] = {"█","▓","▒","░"," "};
+const char* blockScale[] = {"—"," "," "," "," "}; //{"█","▓","▒","░"," "}; —
 
 struct pixelData{
     uint8_t r;
@@ -31,17 +31,19 @@ struct imgData{
 };
 
 struct winsize ws;
-void initGUI(){
+void initGUI(struct winsize &wsI){
     std::cout << "\e[8;48;160t";
     
     if( ioctl( 0, TIOCGWINSZ, &ws ) != 0 ){
         fprintf(stderr, "TIOCGWINSZ:%s\n", strerror(errno));
         exit(1);
     }
+    wsI = ws;
     
 }
-void updateGUI(){
+void updateGUI(struct winsize &WS){
     ioctl( 0, TIOCGWINSZ, &ws );
+    WS = ws;
 }
 
 void loadImage(char* fileName, imgData *imgStruct){
@@ -149,13 +151,15 @@ std::string bitMapView(
             pixVal = double(pixVal)/(256.f);
             
             int random = rand()%100;
+
+//            if(random > 20){
+//                frame += blockScale[int(pixVal*5)];
+//            }else{
+//                frame += grayScale[int(pixVal*66)];
+//            }
+            frame += grayScale[int(pixVal*66)];
             
-            if(random > 20){
-                frame += blockScale[int(pixVal*5)];
-            }else{
-                frame += grayScale[int(pixVal*66)];
-            }
-            
+    
         }
         frame += '\n';
     }

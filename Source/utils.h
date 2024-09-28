@@ -84,3 +84,42 @@ void normalizeResponseDouble(std::vector<double> &values){
             values[i] = uint8_t((normVal / delta)*127);
         }
 }
+
+void initCoordLUT(std::vector<std::vector<double>> &coord, struct winsize &ws){
+    
+    double x = 0;
+    double y = 0;
+    std::vector<double> xy(2);
+    double aspectRatio = double(ws.ws_xpixel)/double(ws.ws_ypixel);
+//    std::cout << aspectRatio;
+    aspectRatio = 1.666;
+
+    
+    for (int i = 0; i < 160; i++) {
+        x = double(i)/160.f;
+//        x /= aspectRatio;
+        x *= .5f;
+        x *= 2.f;
+        x -= .5f;
+        x *= 2.f;
+        x *= 180.f; // not right ????
+
+        coord[0].at(i) = x;
+
+        
+        for (int j = 0; j < 48; j++) {
+            y = double(j)/48.f;
+//            y /= 2.f;
+//            y /= aspectRatio;
+            y *= .5f;
+            y *= 2.f;
+            y -= .5f;
+            y *= 2.f;
+            y *= 90.f;
+
+            coord[1].at(j) = y;
+
+        }
+    }
+    
+}

@@ -7,6 +7,8 @@
 #include "cbmp/cbmp.h"
 #include <nlohmann/json.hpp>  
 #include <curl/curl.h>
+//#include <OpenGL/OpenGL.h>
+#include <glfw3.h>
 
 #include <curses.h>
 #include <chrono>
@@ -18,6 +20,9 @@
 #define GREEN 1
 #define BLUE 2
 #define ALPHA 3
+
+#define CONSOLEWIDTH 160
+#define CONSOLEHEIGHT 48
 
 // KR coordinates
 
@@ -55,6 +60,13 @@ void loadImage(std::string imageFileName, struct image &imgStrct){
 }
 
 int main(){
+    
+    // ----- Audio ----- //
+    
+    
+    
+
+    // ----- Init ----- //
     bool running = true;
     bool useDefault = true;
     
@@ -65,8 +77,29 @@ int main(){
     int weatherService = 0;
     weatherService = OPENWEATHER;
     
+    // ----- GLFW ----- //
+    
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    
+    GLFWwindow* window = glfwCreateWindow(30, 30, "Weather Sonifier", NULL, NULL);
+    
+    if (window == NULL) {
+        return 5;
+    }
+
+    
     //----- GUI ------//
-    initGUI();
+    struct winsize ws;
+    initGUI(ws);
+    updateGUI(ws);
+    
+//    std::vector<std::vector<double>> coord;
+
+//    initCoordLUT(coord, ws);
     
     image logo;
     loadImage("Logo", logo);
@@ -77,17 +110,30 @@ int main(){
     image multi;
     loadImage("multi", multi);
     
+    image empty;
+    loadImage("empty", empty);
     
-    unsigned long currentFrame = 0;
-    unsigned long frameCounter = 0;
+    long currentFrame = 5;
+//    currentFrame = -1;
+    long frameCounter = 0;
+    std::vector<int> inputPosition = {ws.ws_col/2,ws.ws_row/2};
+    
     while (running) {
         std::string init;
         std::string logoFrame;
-        std::string multiFrame;
-        updateGUI();
+        std::string multiFrame; 
+        
+        updateGUI(ws);
         setTransform(1., 1., frameCounter%logo.width, 0.);
         
         switch (currentFrame) {
+                
+            case -1:{ // testing
+                
+//                initCoordLUT(coord, ws);
+//                std::cout << frameCounter;
+                break;
+            }
             case 0:{
                 //width & height are the wrong way around but works
                 init = bitMapView(logo.width, logo.height, logo.imgData, 0,1.f);
@@ -124,12 +170,77 @@ int main(){
                 std::string map_s;
                 map_s = bitMapView(map.width, map.height, map.imgData, 0,1.f);
                 std::cout << map_s;
+                std::cout << "enter coodrinates [1] or locate on map [2]";
+                int option;
+                std::cin >> option;
+                if (option == 1) {
+                    currentFrame = 4;
+                }else if (option == 2){
+                    currentFrame = 5;
+                }
+                
+                break;
+            }
+            case 4:{
+                std::string map_str;
+                map_str = bitMapView(map.width, map.height, map.imgData, 0,1.f);
+                std::cout << map_str;
                 std::cout << "Longitude ?";
                 std::cin >> lon;
                 std::cout << "Lattitude ?";
                 std::cin >> lat;
-                currentFrame = 4;
                 running = false;
+                break;
+            }
+            case 5:{
+                updateGUI(ws);
+                glfwFocusWindow(window);
+
+                glfwPollEvents();
+                if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+                    inputPosition[1] += 1;
+                }
+            
+                if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+                    inputPosition[1] -= 1;
+                }
+                if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+                    inputPosition[0] -= 2;
+                }
+                if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+                    inputPosition[0] += 2;
+                }
+                
+                std::string map_s;
+                map_s = bitMapView(map.width, map.height, map.imgData, 0,1.f);
+
+                int positionIndex =
+                (inputPosition[0]%ws.ws_col) + ((inputPosition[1]%ws.ws_row) * (ws.ws_col+1));
+                
+                std::string::iterator mapIt = map_s.begin();
+                mapIt += positionIndex;
+                
+                map_s.replace(mapIt, mapIt+1, "\033[31m@\033[0m");
+                
+                std::vector<std::vector<double>> coord(2);
+                coord[0].resize(160);
+                coord[1].resize(48);
+                
+                initCoordLUT(coord, ws);
+                
+                if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+                    running = false;
+                    
+                    return 0;
+                }
+                
+                map_s.erase(map_s.end()-((ws.ws_col+1)*2), map_s.end());
+                std::cout << map_s;
+                
+                std::cout << coord[0][inputPosition[0]] << std::endl;
+                std::cout << coord[1][inputPosition[1]] << std::endl;
+                //running = false;
+
                 break;
             }
                 
