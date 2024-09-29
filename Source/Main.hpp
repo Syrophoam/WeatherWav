@@ -3,12 +3,15 @@
 #include "GUI.hpp"
 #include "utils.h"
 #include "API.h"
+#include "audio.h"
 #include "cbmp/cbmp.h"
 #include <nlohmann/json.hpp>  
 #include <curl/curl.h>
 #include <thread>
 #include <curses.h>
 #include <chrono>
+#include <pthread.h>
+
 
 #define METSERVICE 1
 #define OPENWEATHER 2
@@ -39,6 +42,7 @@ struct image {
     int height;
 };
 
+
 void loadImage(std::string imageFileName, struct image &imgStrct){
     imgData img;
     imageFileName += ".bmp";
@@ -59,7 +63,17 @@ void loadImage(std::string imageFileName, struct image &imgStrct){
 int mainFunc(){
     
     // ----- Audio ----- //
-
+//    int cnt = 0;
+//    mainThread mainT;
+//    while(true){
+//        cnt ++;
+//        std::this_thread::sleep_for(std::chrono::seconds(1));
+//        cnt %= 32;
+//        mainT.a = cnt;
+    while(true){
+        mainThreadFunc(NULL);
+    }
+//    }
     
     // ----- Init ----- //
     bool running = true;
@@ -191,7 +205,7 @@ int mainFunc(){
 //                if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 //                    inputPosition[0] += 2;
 //                }
-                //reimplement with juce keyboard input
+                //reimple ment with juce keyboard input
                 
                 std::string map_s;
                 map_s = bitMapView(map.width, map.height, map.imgData, 0,1.f);

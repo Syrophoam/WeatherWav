@@ -1,4 +1,6 @@
 #include "MainComponent.h"
+//#include "../audio.h" 
+#include "../main.hpp"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -27,6 +29,9 @@ MainComponent::~MainComponent()
     shutdownAudio();
 }
 double sampleRateG;
+
+pthread_t t; 
+mainThread mainT;
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
@@ -38,6 +43,8 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 
     // For more details, see the help for AudioProcessor::prepareToPlay()
     sampleRateG = sampleRate;
+    pthread_create(&t, NULL, mainThreadFunc, (void *)&mainT); 
+    mainT.a = 0;
 }
 
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
@@ -58,10 +65,10 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
                 auto currentSample = double(sample)/double(bufferToFill.numSamples);
                  
                 double sin = std::sin((double(sample)*M_PI*2.f)/double(bufferToFill.numSamples));
-                leftBuffer[sample]  = sin ;
+                leftBuffer[sample]  = sin * mainT.a / 32.f;
                 rightBuffer[sample] = sin ;
             }
-    
+
 }
 
 

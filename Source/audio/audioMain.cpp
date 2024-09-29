@@ -8,7 +8,7 @@
 
 #include <JuceHeader.h>
 #include "MainComponent.h"
-#include "../Main.hpp"
+//#include "../Main.hpp"
 #include <thread>
 
 //==============================================================================
@@ -28,10 +28,8 @@ public:
         // This method is where you should put your application's initialisation code..
         
         
-        
-        std::thread t{mainFunc};
         mainWindow.reset (new MainWindow (getApplicationName()));
-        t.join();
+        
     }
 
     void shutdown() override

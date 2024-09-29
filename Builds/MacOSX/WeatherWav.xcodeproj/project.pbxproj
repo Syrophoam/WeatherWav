@@ -66,6 +66,7 @@
 		523170F77D0F06DBCFD7D4E9 /* juce_events */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_events; path = /Users/syro/Downloads/JUCE/modules/juce_events; sourceTree = "<absolute>"; };
 		52811C9A2CA7D85900EC75D2 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
 		52811C9B2CA7D8E100EC75D2 /* libcurl.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.4.dylib; path = ../../../../../opt/homebrew/Cellar/curl/8.10.1/lib/libcurl.4.dylib; sourceTree = "<group>"; };
+		52811C9D2CA8FB7900EC75D2 /* audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = audio.h; path = ../../Source/audio.h; sourceTree = "<group>"; };
 		5C0ED0E71F27C4B019BE3D36 /* include_juce_gui_extra.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_gui_extra.mm; path = ../../JuceLibraryCode/include_juce_gui_extra.mm; sourceTree = SOURCE_ROOT; };
 		61BC88CC29248C8CF8FFC56D /* include_juce_audio_basics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_basics.mm; path = ../../JuceLibraryCode/include_juce_audio_basics.mm; sourceTree = SOURCE_ROOT; };
 		6F31C4ECDEAD87C914FD26C5 /* Main.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Main.hpp; path = ../../Source/Main.hpp; sourceTree = SOURCE_ROOT; };
@@ -192,25 +193,19 @@
 			name = cbmp;
 			sourceTree = "<group>";
 		};
-		AB0158CB6AB4AE6B89A6547A /* audio */ = {
-			isa = PBXGroup;
-			children = (
-				5030CF1F49C6C3506B1B1973 /* audioMain.cpp */,
-				85B438D904536932298A3AA6 /* MainComponent.cpp */,
-				CDF6BA9BCD5FA663FDAEBC9D /* MainComponent.h */,
-			);
-			name = audio;
-			sourceTree = "<group>";
-		};
 		ABE78525D0C401371F779E16 /* Source */ = {
 			isa = PBXGroup;
 			children = (
 				9CEF076EEBF67A79C7632E62 /* cbmp */,
+				85B438D904536932298A3AA6 /* MainComponent.cpp */,
+				5030CF1F49C6C3506B1B1973 /* audioMain.cpp */,
+				CDF6BA9BCD5FA663FDAEBC9D /* MainComponent.h */,
 				789215325DA7609A94E75097 /* API.h */,
 				11E991C7A40EC57E228AD38C /* GUI.hpp */,
 				C3D3FC545018B6CF8F337800 /* Midi.hpp */,
 				83ABBA5E79E451F326BC4480 /* utils.h */,
 				6F31C4ECDEAD87C914FD26C5 /* Main.hpp */,
+				52811C9D2CA8FB7900EC75D2 /* audio.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -261,7 +256,6 @@
 		E0E38A0DBEADA082DF5B6B4B /* WeatherWav */ = {
 			isa = PBXGroup;
 			children = (
-				AB0158CB6AB4AE6B89A6547A /* audio */,
 				ABE78525D0C401371F779E16 /* Source */,
 			);
 			name = WeatherWav;
