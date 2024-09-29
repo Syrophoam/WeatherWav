@@ -17,7 +17,7 @@ class consoleaudioApplication  : public juce::JUCEApplication
 public:
     //==============================================================================
     consoleaudioApplication() {}
-
+    
     const juce::String getApplicationName() override       { return ProjectInfo::projectName; }
     const juce::String getApplicationVersion() override    { return ProjectInfo::versionString; }
     bool moreThanOneInstanceAllowed() override             { return true; }
@@ -27,8 +27,8 @@ public:
     {
         // This method is where you should put your application's initialisation code..
         
-        
         mainWindow.reset (new MainWindow (getApplicationName()));
+        
         
     }
 
@@ -70,6 +70,7 @@ public:
         {
             setUsingNativeTitleBar (true);
             setContentOwned (new MainComponent(), true);
+            
 
            #if JUCE_IOS || JUCE_ANDROID
             setFullScreen (true);

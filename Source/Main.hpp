@@ -12,6 +12,8 @@
 #include <chrono>
 #include <pthread.h>
 
+#include "/Users/syro/WeatherWav/Source/audio/MainComponent.h"
+
 
 #define METSERVICE 1
 #define OPENWEATHER 2
@@ -60,21 +62,22 @@ void loadImage(std::string imageFileName, struct image &imgStrct){
     bclose(img.bmp);
 } 
 
-int mainFunc(){
+
+
+void *mainFunc(void* input){
+    
+    mainThread *mainT=(mainThread *)input;
+    
     
     // ----- Audio ----- //
-//    int cnt = 0;
-//    mainThread mainT;
-//    while(true){
-//        cnt ++;
-//        std::this_thread::sleep_for(std::chrono::seconds(1));
-//        cnt %= 32;
-//        mainT.a = cnt;
-    while(true){
-        mainThreadFunc(NULL);
-    }
+    
+
+//    for (int i = 0; i < 32; i +=2) {
+//        mainT->b = 1;
+//        std::this_thread::sleep_for(std::chrono::seconds(3));
 //    }
     
+    mainT->b = 1;
     // ----- Init ----- //
     bool running = true;
     bool useDefault = true;
@@ -141,24 +144,31 @@ int mainFunc(){
                 
                 if ((settingsInput == "Y") || (settingsInput == "y") ) {
                     running = false;
+                    mainT->b = 1;
                 }
                 
                 break;
             }
             case 1:{
+                
                 logoFrame = bitMapView(logo.width, logo.height, logo.imgData, 0,1.f);
                 std::cout << logoFrame;
                 if (frameCounter > 30) {
+                    mainT->b = 1;
                     currentFrame = 2;
                 }
+                
                 break;
             }
             case 2:{
+                
                 multiFrame = bitMapView(multi.width, multi.height, multi.imgData, frameCounter%3,1.f);
                 std::cout<< multiFrame;
                 if (frameCounter > 60) {
+                    mainT->b = 1;
                     currentFrame = 3;
                 }
+                
                 break;
             }
             case 3:{
@@ -185,6 +195,7 @@ int mainFunc(){
                 std::cout << "Lattitude ?";
                 std::cin >> lat;
                 running = false;
+                mainT->b = 1;
                 break;
             }
             case 5:{
@@ -280,7 +291,7 @@ int mainFunc(){
     
     if (!handle) {
         printf("curl couldnt init");
-        return 1;
+        return nullptr;
     }
     CURLcode res;
     
@@ -321,7 +332,8 @@ int mainFunc(){
 //    char* dat = data;
 //    printf("Page data:\n\n%s\n", data);
     if (std::string(data).length() < xpctsize) {
-        return 9;  
+        return nullptr;
+        
     }
     std::string testdat = std::string(data);
     //----- JSON - Recieve ------//
@@ -334,7 +346,8 @@ int mainFunc(){
         jsonResponse = json::parse(data);
         
         std::ifstream jsonFile("/Users/syro/WeatherWav/Media/jsonformatter.json");
-//        jsonResponse = json::parse(jsonFile); // expected output, curl doesnt give the same string ??????????????..... it works now
+        jsonResponse = json::parse(jsonFile); 
+        // expected output, curl doesnt give the same string ??????????????..... it works now
   
         json variables = jsonResponse["variables"];
         waveHeight = variables["wave.height"]["data"];

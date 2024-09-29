@@ -1,5 +1,4 @@
 #include "MainComponent.h"
-//#include "../audio.h" 
 #include "../main.hpp"
 
 //==============================================================================
@@ -8,7 +7,6 @@ MainComponent::MainComponent()
     // Make sure you set the size of the component after
     // you add any child components.
     setSize (800, 600);
-
     // Some platforms require permissions to open input channels so request that here
     if (juce::RuntimePermissions::isRequired (juce::RuntimePermissions::recordAudio)
         && ! juce::RuntimePermissions::isGranted (juce::RuntimePermissions::recordAudio))
@@ -28,10 +26,12 @@ MainComponent::~MainComponent()
     // This shuts down the audio device and clears the audio source.
     shutdownAudio();
 }
-double sampleRateG;
 
+
+int sampleRateG;
 pthread_t t; 
 mainThread mainT;
+
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
@@ -43,10 +43,13 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 
     // For more details, see the help for AudioProcessor::prepareToPlay()
     sampleRateG = sampleRate;
-    pthread_create(&t, NULL, mainThreadFunc, (void *)&mainT); 
+    pthread_create(&t, NULL, mainFunc, (void *)&mainT); 
     mainT.a = 0;
 }
 
+int cnt = 0;
+double ramp = 0;
+double fbEnv = 0;
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
 {
     // Your audio-processing code goes here!
@@ -59,15 +62,36 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
     auto* leftBuffer  = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
     auto* rightBuffer = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
     
+//    fbEnv += double(mainT.b)/2.f;
     
     for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
-            {
-                auto currentSample = double(sample)/double(bufferToFill.numSamples);
-                 
-                double sin = std::sin((double(sample)*M_PI*2.f)/double(bufferToFill.numSamples));
-                leftBuffer[sample]  = sin * mainT.a / 32.f;
-                rightBuffer[sample] = sin ;
+        {
+            if (mainT.b == 1) {
+                mainT.b = 0;
+                fbEnv = 1.f;
+                cnt = 0;
             }
+            
+            ramp = double(cnt)/double(sampleRateG);
+            ramp = fmod(ramp*440, 1.f);
+            
+//            fbEnv -= .0001f;
+            fbEnv *= 0.9998f;
+            
+            fbEnv = fmax(fbEnv, 0.f);
+            
+            double sin = 0.f;
+            for (float i = 1; i <= 4 ; i += 1) {
+                sin += std::sin(fmod(ramp*i,1.f)*2.f*M_PI);
+            }
+            sin /= 8.f;
+            
+            leftBuffer[sample]  = sin  * fbEnv;
+            rightBuffer[sample] = sin * fbEnv;
+                
+            cnt ++;
+            cnt %= sampleRateG;
+        }
 
 }
 
