@@ -64,9 +64,10 @@ size_t CURLWriteFunction(void *ptr, size_t size, size_t nmemb, void* userData){
     const char* input = (const char*)ptr;
     if(nmemb==0) return 0;
     if (!*stringToWrite) {
-        *stringToWrite = static_cast<char*>(malloc(nmemb+1));
+//        *stringToWrite = (static_cast<char*>()malloc(nmemb+1));
+        *stringToWrite = (char *)malloc(nmemb+1);
     }else{
-        *stringToWrite = static_cast<char*>(realloc(*stringToWrite, size+nmemb+1));
+        *stringToWrite = (char *)realloc(*stringToWrite, size+nmemb+1);
     } 
          
     memcpy(*stringToWrite+dataSize, input, nmemb);

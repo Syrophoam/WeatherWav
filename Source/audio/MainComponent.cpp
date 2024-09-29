@@ -92,7 +92,7 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
             cnt ++;
             cnt %= sampleRateG;
         }
-
+//    pthread_join(t, NULL); idk where to put this, surley not here
 }
 
 

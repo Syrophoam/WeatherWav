@@ -7,10 +7,12 @@
 #include "cbmp/cbmp.h"
 #include <nlohmann/json.hpp>  
 #include <curl/curl.h>
+
 #include <thread>
 #include <curses.h>
 #include <chrono>
 #include <pthread.h>
+
 
 #include "/Users/syro/WeatherWav/Source/audio/MainComponent.h"
 
@@ -62,20 +64,35 @@ void loadImage(std::string imageFileName, struct image &imgStrct){
     bclose(img.bmp);
 } 
 
+bool runningFunc = true;
+// ^[[Aup ^[[Bdown ^[[Dleft ^[[Cright
+void *keyListenrFunction(void *input){
+    mainThread *mainT = (mainThread*)input;
+//    mainT->keyVal = 0;
+    int keyVal = 0;
+    
+    while(runningFunc){
+        std::string keyIn = "";
+        std::cin>>keyIn;
+        
+        if(keyIn.length() > 3){
+            runningFunc = false;
+            mainT->keyVal = 1;
+        }
+    }
+    
+}
+
 
 
 void *mainFunc(void* input){
     
-    mainThread *mainT=(mainThread *)input;
     
+    //- seperate threads-//
+    mainThread *mainT=(mainThread *)input;
+    mainT->keyVal = 0;
     
     // ----- Audio ----- //
-    
-
-//    for (int i = 0; i < 32; i +=2) {
-//        mainT->b = 1;
-//        std::this_thread::sleep_for(std::chrono::seconds(3));
-//    }
     
     mainT->b = 1;
     // ----- Init ----- //
@@ -87,7 +104,7 @@ void *mainFunc(void* input){
     path += "/WeatherWav/Media/";
     
     int weatherService = 0;
-    weatherService = OPENWEATHER;
+    weatherService = METSERVICE;
     
 
     //----- GUI ------//
@@ -111,7 +128,7 @@ void *mainFunc(void* input){
     image empty;
     loadImage("empty", empty);
     
-    long currentFrame = 0;
+    long currentFrame = -1;
 //    currentFrame = -1;
     long frameCounter = 0;
     std::vector<int> inputPosition = {ws.ws_col/2,ws.ws_row/2};
@@ -126,17 +143,12 @@ void *mainFunc(void* input){
         
         switch (currentFrame) {
                 
-            case -1:{ // testing
-                
-//                initCoordLUT(coord, ws);
-//                std::cout << frameCounter;
-                break;
-            }
-            case 0:{
+
+            case -1:{
                 //width & height are the wrong way around but works
                 init = bitMapView(logo.width, logo.height, logo.imgData, 0,1.f);
                 std::cout << init;
-                currentFrame = 1;
+                currentFrame = 0;
                 
                 std::string settingsInput;
                 std::cout << "use default settings? Y / N" << std::endl;
@@ -146,9 +158,18 @@ void *mainFunc(void* input){
                     running = false;
                     mainT->b = 1;
                 }
+//                std::this_thread::sleep_for(std::chrono::seconds(10));
                 
                 break;
             }
+            case 0:{
+                
+                std::cout<< "use Metservice[1] or openWeather[2]"<< std::endl;
+                std::cin >> weatherService;
+                currentFrame =1;
+                break;
+            }
+                
             case 1:{
                 
                 logoFrame = bitMapView(logo.width, logo.height, logo.imgData, 0,1.f);
@@ -196,6 +217,9 @@ void *mainFunc(void* input){
                 std::cin >> lat;
                 running = false;
                 mainT->b = 1;
+                
+                std::cout<<lon<<std::endl;
+                std::cout<<lat<<std::endl;
                 break;
             }
             case 5:{
@@ -217,6 +241,10 @@ void *mainFunc(void* input){
 //                    inputPosition[0] += 2;
 //                }
                 //reimple ment with juce keyboard input
+                //USE ANOTHER THREAD TO LOOK FOR CIN
+                pthread_t keyListener;
+                pthread_create(&keyListener, NULL, keyListenrFunction, (void *)&mainT);
+                std::cout<<std::endl<<mainT->keyVal<<std::endl;
                 
                 std::string map_s;
                 map_s = bitMapView(map.width, map.height, map.imgData, 0,1.f);
@@ -264,8 +292,11 @@ void *mainFunc(void* input){
 //    latitude = std::stod(lat);
     
     //----- JSON - send ------//
+    double lonDouble = std::stod(lon);
+    double latDouble = std::stod(lat);
     std::map pos = std::map<std::string,float>{
-        {"lon",174.7842} , {"lat",-37.7935}
+//        {"lon",174.7842} , {"lat",-37.7935}
+        {"lon",lonDouble} , {"lat",latDouble}
     };
     int repeats = 12;
     
@@ -282,6 +313,7 @@ void *mainFunc(void* input){
     openWeather += lon;
     openWeather += "&appid=";
     openWeather += keyOW;
+    
      
     //----- CURL ------//
     char *data = 0;
@@ -293,7 +325,6 @@ void *mainFunc(void* input){
         printf("curl couldnt init");
         return nullptr;
     }
-    CURLcode res;
     
     if (weatherService == METSERVICE)
         curl_easy_setopt(handle, CURLOPT_URL, "https://forecast-v2.metoceanapi.com/point/time");
@@ -304,6 +335,7 @@ void *mainFunc(void* input){
     curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, &data);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &CURLWriteFunction);
+
         
     if (weatherService == METSERVICE) {
         std::string key_header_MS = "x-api-key: " + key;
@@ -316,8 +348,17 @@ void *mainFunc(void* input){
         curl_easy_setopt(handle, CURLOPT_POSTFIELDS, jsonString.c_str());
     }
 
-       res = curl_easy_perform(handle);    
-      
+    CURLcode res;
+    std::cout<<"before perform";
+    res = curl_easy_perform(handle);
+    curl_easy_cleanup(handle); 
+    
+    json jsonResponse;
+    jsonResponse = json::parse(data);
+//    free(data);
+    
+    std::cout<<"after perform";
+    
     long *expectedSizeOfResponse;
     if (!res) {
         curl_off_t *content_length = nullptr;
@@ -326,27 +367,24 @@ void *mainFunc(void* input){
     }
     long xpctsize = long(expectedSizeOfResponse);
     
-    curl_slist_free_all(headers);
-    curl_easy_cleanup(handle); 
-    
 //    char* dat = data;
-//    printf("Page data:\n\n%s\n", data);
-    if (std::string(data).length() < xpctsize) {
-        return nullptr;
-        
-    }
-    std::string testdat = std::string(data);
+    printf("Page data:\n\n%s\n", data);
+//    if (std::string(data).length() < xpctsize) {
+//        return nullptr;
+//        
+//    }
+    curl_slist_free_all(headers);
+    
+    
+    
     //----- JSON - Recieve ------//
     
     
     json waveHeight;
     std::vector<double> values;
     if (weatherService == METSERVICE) {
-        json jsonResponse;
-        jsonResponse = json::parse(data);
+
         
-        std::ifstream jsonFile("/Users/syro/WeatherWav/Media/jsonformatter.json");
-        jsonResponse = json::parse(jsonFile); 
         // expected output, curl doesnt give the same string ??????????????..... it works now
   
         json variables = jsonResponse["variables"];
@@ -358,10 +396,11 @@ void *mainFunc(void* input){
     struct openWeather OWVec;
     
     if (weatherService == OPENWEATHER) {
-        json jsonResponse;
-        jsonResponse = json::parse(data);
-//        jsonResponse = json::f
-  
+        
+        
+//        std::ifstream jsonFile("/Users/syro/WeatherWav/Media/jsonformatter.json");
+//        jsonResponse = json::parse(jsonFile);
+
         int count = jsonResponse["cnt"];
  
         OWVec.cityName = jsonResponse["city"]["name"];
@@ -390,19 +429,21 @@ void *mainFunc(void* input){
         normalizeResponseInt(OWVec.visibility);
     }
     
-    free(data);// idk why this was here, mabye important? 
+//    free(data);// idk why this was here, mabye important? 
     
     //----- MIDI ------//
+//    std::cout<<"Writing midi file..."<< std::endl;
     std::string midiPath_S = "/Users/syro/WeatherWav/Media/";
-    char* midiPath = "midi.mid";
+    std::string midiPath = "midi.mid";
     midiPath_S += midiPath;
     
     std::remove(midiPath_S.data());
     juce::MidiFile midiFile;
     midiFile.setTicksPerQuarterNote(96); // multiply to make track shorter
     
-    writeSequence(values, "wind?", midiFile);
-    writeSequence(values, "wind2?", midiFile);
+    if(weatherService == METSERVICE){
+        writeSequence(values, "wind", midiFile);
+    }
     
     if (weatherService == OPENWEATHER) {
         writeSequence(OWVec.visibility, "visibility", midiFile);
@@ -424,6 +465,9 @@ void *mainFunc(void* input){
 
     juce::FileOutputStream stream = juce::File(midiPath_S.data());
     midiFile.writeTo(stream);
+    
+    std::cout<<"Written midi file"<<std::endl;
+    pthread_exit(NULL);
     
     return 0;
 }

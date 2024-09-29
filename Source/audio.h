@@ -13,14 +13,14 @@
 typedef struct mainThread {
     double a;
     int b;
-    int c;
+    int keyVal;
 } test;
 
-void mainThreadFunc(int input){
+void *mainThreadFunc(void* input){
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    return;
+    
 }
 
 

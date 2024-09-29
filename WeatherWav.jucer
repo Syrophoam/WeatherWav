@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="pyzw5w" name="WeatherWav" projectType="consoleapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" cppLanguageStandard="20"
-              headerPath="/opt/homebrew/Cellar/nlohmann-json/3.11.3/include&#10;/opt/homebrew/Cellar/curl/8.10.1/include&#10;/opt/homebrew/Cellar/glfw/3.4/include&#10;"
+              headerPath="/opt/homebrew/Cellar/nlohmann-json/3.11.3/include&#10;&#10;"
               displaySplashScreen="1">
   <MAINGROUP id="amn1OH" name="WeatherWav">
     <GROUP id="{9C8A0210-11D2-942B-4EF4-B799978519B7}" name="audio">
