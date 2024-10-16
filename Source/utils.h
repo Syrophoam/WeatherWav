@@ -7,12 +7,11 @@
 //#include "API.h" 
 
 
-
 std::vector<double> normalizeValues(nlohmann::json values){
     
     unsigned long size = values.size();
     
-    double max = 0;
+    double max = -std::numeric_limits<double>::max();
     double min = std::numeric_limits<double>::max();
     
     for(int i = 0; i < size; i++){
@@ -40,9 +39,49 @@ std::vector<double> normalizeValues(nlohmann::json values){
 // make option to normalize values based on the max value in array OR max possible value in API
 
 
+void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::json variables){
+
+    std::vector<double> airVisibility, airHumidity, airPressure, airTemperature, airCAPE;
+    std::vector<double> cloudCover, cloudBase;
+    std::vector<double> windSpeedEast, windSpeedWest, windSpeedGust;
+    std::vector<double> fluxPrecipitation, fluxRadiationLongwave, fluxRadiationShortwave;
+    std::vector<double> currentSpeedNorth, currentSpeedEast, currentSpeedNorthBarotropic, currentSpeedEastBarotropic;
+    std::vector<double> seaDepthSurface, seaDepthSeaLevel, seaTempurature;
+    std::vector<double> waveDirectionMean, wavePeriodPeak, waveHeight;
+        
+    
+        airVisibility = normalizeValues(variables["air.visibility"]["data"]);
+        airHumidity = normalizeValues(variables["air.humidity.at-2m"]["data"]);
+        airPressure =  normalizeValues(variables["air.pressure.at-sea-level"]["data"]);
+        airTemperature = normalizeValues(variables["air.temperature.at-2m"]["data"]);
+        airCAPE = normalizeValues(variables["atmosphere.convective.potential.energy"]["data"]);
+        
+//        cloudBase = normalizeValues(variables["cloud.base.height"]["data"]);
+        cloudBase = {0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0};
+        cloudCover = normalizeValues(variables["cloud.cover"]["data"]);
+        
+        windSpeedEast = normalizeValues(variables["wind.speed.eastward.at-10m"]["data"]);
+        windSpeedWest = normalizeValues(variables["wind.speed.westward.at-10m"]["data"]);
+        windSpeedGust = normalizeValues(variables["wind.speed.gust.at-10m"]["data"]);
+        
+        fluxPrecipitation = normalizeValues(variables["precipitation.rate"]["data"]);
+        fluxRadiationLongwave = normalizeValues(variables["radiation.flux.downward.longwave"]["data"]);
+        fluxRadiationShortwave= normalizeValues(variables["radiation.flux.downward.shortwave"]["data"]);
+        
+        waveDirectionMean = normalizeValues(variables["wave.direction.mean"]["data"]);
+        wavePeriodPeak = normalizeValues(variables["wave.period.peak"]["data"]);
+        waveHeight = normalizeValues(variables["wave.height"]["data"]);
+        
+        variableGroup[0] = {airVisibility,airHumidity,airPressure,airTemperature,airCAPE};
+        variableGroup[1] = {cloudCover};
+        variableGroup[2] = {windSpeedEast,windSpeedWest,windSpeedGust};
+        variableGroup[3] = {fluxPrecipitation, fluxRadiationLongwave, fluxRadiationShortwave};
+        variableGroup[4] = {waveDirectionMean, wavePeriodPeak, waveHeight};
+}
+
 void normalizeResponseInt(std::vector<unsigned int> &values){
         unsigned long size = values.size();
-        int max = 0;
+        int max = -std::numeric_limits<double>::max();
         int min = std::numeric_limits<int>::max();
         
         for(int i = 0; i < size; i++){
@@ -65,7 +104,7 @@ void normalizeResponseInt(std::vector<unsigned int> &values){
 
 void normalizeResponseDouble(std::vector<double> &values){
         unsigned long size = values.size();
-        double max = 0;
+        double max = -std::numeric_limits<double>::max();
         double min = std::numeric_limits<double>::max();
         
         for(int i = 0; i < size; i++){

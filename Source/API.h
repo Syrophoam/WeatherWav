@@ -57,33 +57,46 @@ struct openWeather{
 };
   
 using json = nlohmann::json;
-size_t dataSize = 0;
-size_t CURLWriteFunction(void *ptr, size_t size, size_t nmemb, void* userData){
-    
-    char** stringToWrite = (char**)userData;
-    const char* input = (const char*)ptr;
-    if(nmemb==0) return 0;
-    if (!*stringToWrite) {
-//        *stringToWrite = (static_cast<char*>()malloc(nmemb+1));
-        *stringToWrite = (char *)malloc(nmemb+1);
-    }else{
-        *stringToWrite = (char *)realloc(*stringToWrite, size+nmemb+1);
-    } 
-         
-    memcpy(*stringToWrite+dataSize, input, nmemb);
-    dataSize += nmemb;
-    (*stringToWrite)[dataSize] = '\0';
-    return nmemb;
+
+struct response {
+  char *memory;
+  size_t size;
+};
+
+static size_t
+mem_cb(void *contents, size_t size, size_t nmemb, void *userp)
+{
+  size_t realsize = size * nmemb;
+  struct response *mem = (struct response *)userp;
+
+  char *ptr = (char *)realloc(mem->memory, mem->size + realsize + 1);
+  if(!ptr) {
+    /* out of memory! */
+    printf("not enough memory (realloc returned NULL)\n");
+    return 0;
+  }
+
+  mem->memory = ptr;
+  memcpy(&(mem->memory[mem->size]), contents, realsize);
+  mem->size += realsize;
+  mem->memory[mem->size] = 0;
+
+  return realsize;
 }
 
-json requestMS(std::map<std::string,float> pos, int repeats){ // metservice
+
+json requestMS(std::map<std::string,float> pos, int repeats, int timeGap){ // metservice
     json jsonReq = {};
 
-    
     json::array_t positionArray = {pos};
     jsonReq["points"] = positionArray;
     
-    json::array_t variables = {"wave.height","air.visibility"}; // variable list
+    json::array_t variables =
+    {"wave.height","wave.period.peak","wave.direction.mean",
+        "air.visibility","air.humidity.at-2m","air.pressure.at-sea-level","air.temperature.at-2m",
+        "atmosphere.convective.potential.energy",
+        "cloud.cover","precipitation.rate","radiation.flux.downward.longwave",
+        "radiation.flux.downward.shortwave", "wind.direction.at-10m","wind.direction.at-100m"}; 
     jsonReq["variables"] = variables;
     
     const auto now = std::chrono::system_clock::now();
@@ -92,8 +105,22 @@ json requestMS(std::map<std::string,float> pos, int repeats){ // metservice
     //currentTime = "2024-09-23T06:15:00Z";
     currentTime = std::format("{:%FT%H:%M:00Z}", now);
     
+    std::string timeGapString;
+    switch (timeGap) {
+        case 0:{
+            timeGapString = "1h";
+            break;
+        }
+        case 1:{
+            timeGapString = "1m";
+        }
+            
+        default:
+            break;
+    }
+    
     std::map time = std::map<std::string, std::string>{
-        {"from",currentTime}, {"interval","1h"}
+        {"from",currentTime}, {"interval",timeGapString}
     };
     
     jsonReq["time"] = time;
@@ -182,3 +209,30 @@ json requestMS(std::map<std::string,float> pos, int repeats){ // metservice
         
 }
 
+
+std::vector<std::vector<int>> getTime(json data){
+    
+    
+    unsigned int size = data["dimensions"]["time"]["data"].size();
+    std::vector<std::vector<int>> timeVec;
+    timeVec.resize(size);
+     
+    char hour[2];
+    char min[2];
+    for(int i = 0; i < size; i++){
+        timeVec[i].resize(2);
+        std::string timeStr = data["dimensions"]["time"]["data"][i];
+        size_t timePos = timeStr.find("T");
+    
+        timeStr.erase(timeStr.begin(), timeStr.begin()+timePos+1);
+        timeStr.copy(hour,2);
+        timeStr.erase(timeStr.begin(),timeStr.begin()+3);
+        timeStr.copy(min,2);
+          
+        timeVec[i][0] = std::stoi(min);
+        timeVec[i][1] = std::stoi(hour);
+        // hour works but min doesnt cus duuuhhh so obvious
+        
+    }
+    return timeVec;
+}

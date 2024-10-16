@@ -7,18 +7,22 @@
 
 #ifndef audio_h
 #define audio_h
-//#include "Main.hpp" 
+//#include <juce_Header.h>
+//#include "Main.hpp"
 //#include "/Users/syro/WeatherWav/Source/audio/MainComponent.h"
 
 typedef struct mainThread {
     double a;
     int b;
     int keyVal;
+    juce::MidiMessage msg;
+    bool sendMsg;
+    juce::MidiBuffer midiBuffer;
 } test;
 
 void *mainThreadFunc(void* input){
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+//        std::this_thread::sleep_for(std::chrono::seconds(1));
 
     
 }

@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "API.h"
 #include "audio.h"
+#include "3DRenderer.h"
 #include "cbmp/cbmp.h"
 #include <nlohmann/json.hpp>  
 #include <curl/curl.h>
@@ -13,9 +14,7 @@
 #include <chrono>
 #include <pthread.h>
 
-
 #include "/Users/syro/WeatherWav/Source/audio/MainComponent.h"
-
 
 #define METSERVICE 1
 #define OPENWEATHER 2
@@ -80,21 +79,33 @@ void *keyListenrFunction(void *input){
             mainT->keyVal = 1;
         }
     }
-    
+    // if you can automatiocaly return cin this would work
 }
 
 
 
+
 void *mainFunc(void* input){
+    bool ambientMode = false;
     
+
     
-    //- seperate threads-//
+    //- seperate thread init -//
     mainThread *mainT=(mainThread *)input;
     mainT->keyVal = 0;
     
     // ----- Audio ----- //
     
     mainT->b = 1;
+    
+    //-----midi?-------//
+
+//    while(true){
+//        int randVal = rand()%127;
+//        mainT->sendMsg = true;
+//        std::this_thread::sleep_for(std::chrono::seconds(3));
+//    }
+    
     // ----- Init ----- //
     bool running = true;
     bool useDefault = true;
@@ -112,9 +123,8 @@ void *mainFunc(void* input){
     initGUI(ws);
     updateGUI(ws);
     
-//    std::vector<std::vector<double>> coord;
-
-//    initCoordLUT(coord, ws);
+//    initRenderer();
+//    mainRenderer(); <- gonna be so hard :(
     
     image logo;
     loadImage("Logo", logo);
@@ -129,7 +139,6 @@ void *mainFunc(void* input){
     loadImage("empty", empty);
     
     long currentFrame = -1;
-//    currentFrame = -1;
     long frameCounter = 0;
     std::vector<int> inputPosition = {ws.ws_col/2,ws.ws_row/2};
     
@@ -158,7 +167,7 @@ void *mainFunc(void* input){
                     running = false;
                     mainT->b = 1;
                 }
-//                std::this_thread::sleep_for(std::chrono::seconds(10));
+
                 
                 break;
             }
@@ -207,6 +216,7 @@ void *mainFunc(void* input){
                 
                 break;
             }
+                
             case 4:{
                 std::string map_str;
                 map_str = bitMapView(map.width, map.height, map.imgData, 0,1.f);
@@ -242,6 +252,8 @@ void *mainFunc(void* input){
 //                }
                 //reimple ment with juce keyboard input
                 //USE ANOTHER THREAD TO LOOK FOR CIN
+                
+                
                 pthread_t keyListener;
                 pthread_create(&keyListener, NULL, keyListenrFunction, (void *)&mainT);
                 std::cout<<std::endl<<mainT->keyVal<<std::endl;
@@ -288,19 +300,16 @@ void *mainFunc(void* input){
         //running = false;
     }
     
-//    longitude = std::stod(lon);
-//    latitude = std::stod(lat);
-    
     //----- JSON - send ------//
     double lonDouble = std::stod(lon);
     double latDouble = std::stod(lat);
     std::map pos = std::map<std::string,float>{
-//        {"lon",174.7842} , {"lat",-37.7935}
+//        {"lon",174.7842} , {"lat",-37.7935} // kr coords
         {"lon",lonDouble} , {"lat",latDouble}
     };
-    int repeats = 12;
+    int repeats = 24;
     
-    json jMS = requestMS(pos,repeats);
+    json jMS = requestMS(pos,repeats,0); // 0 = 1h, 1 = 1m
     std::string jsonString = jMS.dump();
     
     
@@ -317,9 +326,15 @@ void *mainFunc(void* input){
      
     //----- CURL ------//
     char *data = 0;
+    struct response chunk = {.memory = (char *)malloc(0),
+                             .size = 0};
+    
     std::string key = "S14jxYHPDoXhtPwrvYRm9m";
     CURL *handle = curl_easy_init();
-    struct curl_slist *headers = NULL;
+    struct curl_slist *headers = NULL; 
+    CURLcode res;
+    
+    char error[CURL_ERROR_SIZE]; /* needs to be at least this big */
     
     if (!handle) {
         printf("curl couldnt init");
@@ -333,10 +348,13 @@ void *mainFunc(void* input){
         curl_easy_setopt(handle, CURLOPT_URL, openWeather.data());
     
     curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
-    curl_easy_setopt(handle, CURLOPT_WRITEDATA, &data);
-    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &CURLWriteFunction);
-
-        
+//    curl_easy_setopt(handle, CURLOPT_WRITEDATA, &data);
+    
+    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &mem_cb);
+    curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void *)&chunk);
+    curl_easy_setopt(handle, CURLOPT_ERRORBUFFER, error);
+    error[0] = 0; 
+    
     if (weatherService == METSERVICE) {
         std::string key_header_MS = "x-api-key: " + key;
         headers = curl_slist_append(headers, key_header_MS.c_str());
@@ -344,62 +362,126 @@ void *mainFunc(void* input){
         headers = curl_slist_append(headers, "accept: application/json");
         headers = curl_slist_append(headers, "Content-Type: application/json");
         
+//        curl_easy_setopt(handle, CURLOPT_BUFFERSIZE, 120000L);
         curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(handle, CURLOPT_POSTFIELDS, jsonString.c_str());
     }
-
-    CURLcode res;
-    std::cout<<"before perform";
-    res = curl_easy_perform(handle);
-    curl_easy_cleanup(handle); 
     
-    json jsonResponse;
-    jsonResponse = json::parse(data);
-//    free(data);
-    
-    std::cout<<"after perform";
-    
-    long *expectedSizeOfResponse;
-    if (!res) {
-        curl_off_t *content_length = nullptr;
-        curl_easy_getinfo(handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T,&content_length);
-        expectedSizeOfResponse = content_length;
+    if(!ambientMode){
+        res = curl_easy_perform(handle);
+//        if(res != CURLE_OK){ 
+            const char *strErr = curl_easy_strerror( res );
+            printf("libcurl said %s\n", strErr);
+            
+            size_t len = strlen(error);
+            fprintf(stderr, "\nlibcurl: (%d) ", res);
+            if(len)
+              fprintf(stderr, "%s%s", error,
+                      ((error[len - 1] != '\n') ? "\n" : ""));
+            else
+              fprintf(stderr, "%s\n", curl_easy_strerror(res));
+            
+//        } 
+        
+    }else{
+        chunk.memory = "{}";
     }
-    long xpctsize = long(expectedSizeOfResponse);
     
-//    char* dat = data;
-    printf("Page data:\n\n%s\n", data);
-//    if (std::string(data).length() < xpctsize) {
-//        return nullptr;
-//        
-//    }
+    printf("Page data:\n\n%s\n", chunk.memory);
+    
+    curl_easy_cleanup(handle);
     curl_slist_free_all(headers);
     
+    json jsonResponse;
+    jsonResponse = json::parse(chunk.memory);
+
+    //----- ambient version? -//
     
+    CURL *handle2 = curl_easy_init();
+    struct curl_slist *headers2 = NULL;
+    unsigned int valCounter = 0;
+    
+    while(ambientMode){
+        char *ambData = 0;
+        struct response ambChunk = {.memory = (char *)malloc(0),
+                                 .size = 0};
+        
+        printf("starting ambient mode");
+        json ambJson = requestMS(pos,1,1); // 0 = 1h, 1 = 1m
+        std::string jsonString = ambJson.dump();
+
+        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, &mem_cb);
+        curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void *)&ambChunk);
+        
+        std::string key_header_MS = "x-api-key: " + key;
+        headers2 = curl_slist_append(headers2, key_header_MS.c_str());
+        headers2 = curl_slist_append(headers2, "accept: application/json");
+        headers2 = curl_slist_append(headers2, "Content-Type: application/json");
+
+        curl_easy_setopt(handle2, CURLOPT_URL, "https://forecast-v2.metoceanapi.com/point/time");
+        curl_easy_setopt(handle2, CURLOPT_HTTPHEADER, headers2);
+        curl_easy_setopt(handle2, CURLOPT_POSTFIELDS, jsonString.c_str());
+        
+        res = curl_easy_perform(handle2);
+        printf("Page data:\n\n%s\n", ambChunk.memory);
+        jsonResponse.clear();
+        jsonResponse = json::parse(ambChunk.memory);
+        
+        free(ambChunk.memory);
+        free(ambChunk.memory);
+        std::vector<std::vector<double>> variableGroup[5];
+        formatResponse(variableGroup, jsonResponse["variables"]);
+        
+        juce::MidiMessage ccMsg;
+        juce::MidiBuffer midiBuff;
+        midiBuff.clear();
+        
+        valCounter ++;
+        valCounter %= 24;
+        
+        unsigned int numGroups = 5;
+        
+        for(int i = 0; i < numGroups; i ++){
+            unsigned int numParamsInGroup = variableGroup[i].size();
+            
+            for(int j = 0; j < numParamsInGroup; j++){
+                std::vector<double> values = variableGroup[i][j];
+                
+                double val1 = values[0];
+                double val2 = values[1];
+                
+                for(int k = 0; k < 96; k ++){
+                    
+                    uint8_t interpVal = lerp(val1, val2, double(j)/(double(96)), true );
+                    
+                    ccMsg = juce::MidiMessage::controllerEvent(1, i, interpVal%127);
+                    
+                    midiBuff.addEvent(ccMsg, double(j) * (44100.f/96.f));
+                    
+                }
+            }
+        }
+        
+        mainT->midiBuffer.addEvents(midiBuff, 0, 44100, 0);
+        mainT->sendMsg = true;
+        std::this_thread::sleep_for(std::chrono::seconds(60));
+        
+    }
+
+    if(ambientMode){
+        curl_easy_cleanup(handle2);
+        curl_slist_free_all(headers2);
+    }
     
     //----- JSON - Recieve ------//
+    std::cout<<"parsing Data"<<std::endl;
     
-    
-    json waveHeight;
-    std::vector<double> values;
-    if (weatherService == METSERVICE) {
-
-        
-        // expected output, curl doesnt give the same string ??????????????..... it works now
-  
-        json variables = jsonResponse["variables"];
-        waveHeight = variables["wave.height"]["data"];
-        values = normalizeValues(waveHeight);
-        // put more variables //
-    }
+    std::vector<std::vector<double>> variableGroup[5];
+    formatResponse(variableGroup, jsonResponse["variables"]);
   
     struct openWeather OWVec;
     
     if (weatherService == OPENWEATHER) {
-        
-        
-//        std::ifstream jsonFile("/Users/syro/WeatherWav/Media/jsonformatter.json");
-//        jsonResponse = json::parse(jsonFile);
 
         int count = jsonResponse["cnt"];
  
@@ -432,39 +514,81 @@ void *mainFunc(void* input){
 //    free(data);// idk why this was here, mabye important? 
     
     //----- MIDI ------//
-//    std::cout<<"Writing midi file..."<< std::endl;
+    std::cout<<"Writing midi file..."<< std::endl;
     std::string midiPath_S = "/Users/syro/WeatherWav/Media/";
     std::string midiPath = "midi.mid";
     midiPath_S += midiPath;
     
     std::remove(midiPath_S.data());
+
     juce::MidiFile midiFile;
-    midiFile.setTicksPerQuarterNote(96); // multiply to make track shorter
+    midiFile.setTicksPerQuarterNote(48); // multiply to make track shorter
+    juce::StringRef name;
     
-    if(weatherService == METSERVICE){
-        writeSequence(values, "wind", midiFile);
+    if(weatherService == METSERVICE){ 
+ 
+        juce::MidiMessageSequence air;
+        air.addSequence(groupWriteSequence(variableGroup[0]),0);
+        air.addEvent(juce::MidiMessage::textMetaEvent(3, "Air"));
+        midiFile.addTrack(air);
+        
+        juce::MidiMessageSequence cloud;
+        cloud.addSequence(groupWriteSequence(variableGroup[1]),0);
+        cloud.addEvent(juce::MidiMessage::textMetaEvent(3, "Cloud"));
+        midiFile.addTrack(cloud);
+        
+        juce::MidiMessageSequence wind;
+        wind.addSequence(groupWriteSequence(variableGroup[2]),0);
+        wind.addEvent(juce::MidiMessage::textMetaEvent(3, "Wind"));
+        midiFile.addTrack(wind);
+        
+        juce::MidiMessageSequence flux;
+        flux.addSequence(groupWriteSequence(variableGroup[3]),0);
+        flux.addEvent(juce::MidiMessage::textMetaEvent(3, "Flux"));
+        midiFile.addTrack(flux);
+        
+        juce::MidiMessageSequence wave;
+        wave.addSequence(groupWriteSequence(variableGroup[4]),0);
+        wave.addEvent(juce::MidiMessage::textMetaEvent(3, "Waves"));
+        midiFile.addTrack(wave);
+        
+//        midiFile.addTrack(addMidiFile(0,4));
+        
     }
     
     if (weatherService == OPENWEATHER) {
-        writeSequence(OWVec.visibility, "visibility", midiFile);
-        writeSequence(OWVec.pop, "probability of rain", midiFile);
-        writeSequence(OWVec.temp, "temp", midiFile);
-        writeSequence(OWVec.temp_min, "temp Min", midiFile);
-        writeSequence(OWVec.temp_max, "temp Max", midiFile);
-        writeSequence(OWVec.feels_like, "feels like", midiFile);
-        writeSequence(OWVec.pressure, "pressure", midiFile);
-        writeSequence(OWVec.sea_level, "seaLevel", midiFile);
-        writeSequence(OWVec.grnd_level, "ground level", midiFile);
-        writeSequence(OWVec.humidity, "humidity", midiFile);
-        writeSequence(OWVec.clouds, "clouds", midiFile);
-        writeSequence(OWVec.windDeg, "wind direction", midiFile);
-        writeSequence(OWVec.windGust, "wind gust", midiFile);
-        writeSequence(OWVec.rain3h, "rain", midiFile);
-        writeSequence(OWVec.snow3h, "snow", midiFile);
+        
+        juce::MidiMessageSequence wind;
+        wind.addSequence(writeSequence(OWVec.windDeg, 1),0);
+        wind.addSequence(writeSequence(OWVec.windGust,2),0);
+        name = "wind";
+        juce::MidiMessage nameEvent = juce::MidiMessage::textMetaEvent(3, name);
+        wind.addEvent(nameEvent);
+        midiFile.addTrack(wind);
+        
+        writeSequence(OWVec.visibility,1);
+        writeSequence(OWVec.pop, 1);
+        writeSequence(OWVec.temp, 1);
+        writeSequence(OWVec.temp_min, 1);
+        writeSequence(OWVec.temp_max, 1);
+        writeSequence(OWVec.feels_like, 1);
+        writeSequence(OWVec.pressure, 1);
+        writeSequence(OWVec.humidity, 1);
+        writeSequence(OWVec.clouds, 1);
+        
+        writeSequence(OWVec.rain3h, 1);
+        writeSequence(OWVec.snow3h, 1);
     }
-
+    
     juce::FileOutputStream stream = juce::File(midiPath_S.data());
-    midiFile.writeTo(stream);
+    
+    
+    if(stream.openedOk()){
+        midiFile.writeTo(stream);
+    }else{
+        std::cout<<"failed to open stream"<<std::endl;
+    }
+    
     
     std::cout<<"Written midi file"<<std::endl;
     pthread_exit(NULL);
