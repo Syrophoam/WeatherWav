@@ -88,8 +88,6 @@ void *keyListenrFunction(void *input){
 void *mainFunc(void* input){
     bool ambientMode = false;
     
-
-    
     //- seperate thread init -//
     mainThread *mainT=(mainThread *)input;
     mainT->keyVal = 0;
@@ -98,7 +96,7 @@ void *mainFunc(void* input){
     
     mainT->b = 1;
     
-    //-----midi?-------//
+    //-----midi out?-------//
 
 //    while(true){
 //        int randVal = rand()%127;
@@ -117,7 +115,6 @@ void *mainFunc(void* input){
     int weatherService = 0;
     weatherService = METSERVICE;
     
-
     //----- GUI ------//
     struct winsize ws;
     initGUI(ws);
@@ -286,7 +283,7 @@ void *mainFunc(void* input){
                 
                 std::cout << coord[0][inputPosition[0]] << std::endl;
                 std::cout << coord[1][inputPosition[1]] << std::endl;
-                //running = false;
+                //running = false; 
 
                 break;
             }
@@ -363,7 +360,7 @@ void *mainFunc(void* input){
         headers = curl_slist_append(headers, "Content-Type: application/json");
         
 //        curl_easy_setopt(handle, CURLOPT_BUFFERSIZE, 120000L);
-        curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers); 
         curl_easy_setopt(handle, CURLOPT_POSTFIELDS, jsonString.c_str());
     }
     
@@ -477,7 +474,9 @@ void *mainFunc(void* input){
     std::cout<<"parsing Data"<<std::endl;
     
     std::vector<std::vector<double>> variableGroup[5];
-    formatResponse(variableGroup, jsonResponse["variables"]);
+    
+    if(weatherService == METSERVICE)
+        formatResponse(variableGroup, jsonResponse["variables"]);
   
     struct openWeather OWVec;
     
@@ -527,23 +526,27 @@ void *mainFunc(void* input){
     
     if(weatherService == METSERVICE){ 
  
+        
         juce::MidiMessageSequence air;
+        std::cout<<"group write sequence"<<std::endl;
         air.addSequence(groupWriteSequence(variableGroup[0]),0);
         air.addEvent(juce::MidiMessage::textMetaEvent(3, "Air"));
         midiFile.addTrack(air);
+        std::cout<<"group write sequence Done"<<std::endl;
         
         juce::MidiMessageSequence cloud;
         cloud.addSequence(groupWriteSequence(variableGroup[1]),0);
         cloud.addEvent(juce::MidiMessage::textMetaEvent(3, "Cloud"));
         midiFile.addTrack(cloud);
+        std::cout<<"cloud"<<std::endl;
         
         juce::MidiMessageSequence wind;
         wind.addSequence(groupWriteSequence(variableGroup[2]),0);
         wind.addEvent(juce::MidiMessage::textMetaEvent(3, "Wind"));
-        midiFile.addTrack(wind);
+        midiFile.addTrack(wind); 
         
         juce::MidiMessageSequence flux;
-        flux.addSequence(groupWriteSequence(variableGroup[3]),0);
+        flux.addSequence(groupWriteSequence(variableGroup[3]),0); 
         flux.addEvent(juce::MidiMessage::textMetaEvent(3, "Flux"));
         midiFile.addTrack(flux);
         
@@ -580,18 +583,19 @@ void *mainFunc(void* input){
         writeSequence(OWVec.snow3h, 1);
     }
     
+    std::cout<<"making stream"<<std::endl;
     juce::FileOutputStream stream = juce::File(midiPath_S.data());
     
-    
+    std::cout<<"Opening Stream"<<std::endl;
     if(stream.openedOk()){
         midiFile.writeTo(stream);
     }else{
         std::cout<<"failed to open stream"<<std::endl;
     }
-    
-    
     std::cout<<"Written midi file"<<std::endl;
-    pthread_exit(NULL);
     
+    mainT->b = 1;
+    
+    pthread_exit(NULL);
     return 0;
 }

@@ -17,7 +17,7 @@ double lerp(double a, double b, double interp, bool isUp){
     return (((b*2*interp)+(a*-2*interp))/2) + a;
 }
 
-int ticks = 480;
+int ticks = 48; // AAHhH
 int tickStep = 10;
 
 juce::MidiMessageSequence readMidi(std::string filePath, int trackIndex){
@@ -33,6 +33,8 @@ juce::MidiMessageSequence readMidi(std::string filePath, int trackIndex){
     juce::MidiMessageSequence::MidiEventHolder **eventHolder;
     eventHolder = seq.begin();
     
+    
+    
     return seq;
 }
 
@@ -40,7 +42,8 @@ juce::MidiMessageSequence loopMidiSequence(juce::MidiMessageSequence seq, int lo
     
     juce::MidiMessageSequence::MidiEventHolder **eventHolder;
     eventHolder = seq.begin();
-     
+    ticksPQN *= 10;
+    
     juce::MidiMessageSequence seqCpy;
     unsigned int loopCnt = 0;
     for (int i = 1; i < (seq.getNumEvents() * loopNum); i++) {
@@ -73,13 +76,15 @@ juce::MidiMessageSequence loopMidiSequence(juce::MidiMessageSequence seq, int lo
 
 juce::MidiMessageSequence groupWriteSequence(std::vector<std::vector<double>> group){
     
-    juce::MidiMessage ccMsg;
-    juce::MidiMessageSequence seq;
     std::vector<double> values;
     juce::MidiMessageSequence mainSeq;
-    int notes[3] = {60,60+7,60+12};
     
     for(int k = 0; k < group.size(); k++){
+//        mainSeq.clear();
+        
+        juce::MidiMessage ccMsg;
+        juce::MidiMessageSequence seq;
+        
         values = group[k];
     
     unsigned long numValues = values.size();
@@ -91,20 +96,25 @@ juce::MidiMessageSequence groupWriteSequence(std::vector<std::vector<double>> gr
         double val2 = values[(j+1)%numValues];
         bool isUp = val1 < val2;
         
-        for (int i = 0; i < (ticks*numValues); i+= tickStep) {
+        for (int i = 0; i < (ticks*numValues); i++) {
             ccMsg =
             ccMsg.controllerEvent(1, midiCC,
-                                  uint8_t(lerp(val1, val2,  (double(i)/double(tickStep))/(double(ticks)*double(numValues)),isUp ) ) );
-            ccMsg.addToTimeStamp((double(i)/double(tickStep)) + (j*ticks*numValues));
+                                  uint8_t(lerp(val1, val2,  double(i)/(double(ticks)*double(numValues) ),isUp )));
+            ccMsg.addToTimeStamp(i + (j*ticks*numValues));
             seq.addEvent(ccMsg);
             
+            }
         }
+        mainSeq.addSequence(seq, 0);
     }
-        juce::MidiMessageSequence fileSeq = readMidi("/Users/syro/WeatherWav/Media/exampleInputMidi.mid",0);
-        juce::MidiMessageSequence loopedSeq = loopMidiSequence(fileSeq, 8, ticks, 4);
-        mainSeq.addSequence(loopedSeq, 0);
-        mainSeq.addSequence(seq, 0);  
-}
+    juce::MidiMessageSequence fileSeq = readMidi("/Users/syro/WeatherWav/Media/exampleInputMidi.mid",0);
+    
+    juce::MidiMessageSequence loopedSeq;
+    loopedSeq.addSequence(loopMidiSequence(fileSeq, 8, ticks, 4), 0);
+    
+    mainSeq.addSequence(loopedSeq, 0); 
+    
+    
     return mainSeq;
 }
 
@@ -120,11 +130,11 @@ juce::MidiMessageSequence writeSequence(std::vector<double> values, int midiCC){
         double val2 = values[(j+1)%numValues];
         bool isUp = val1 < val2;
          
-        for (int i = 0; i < (ticks*numValues); i += tickStep ) {
+        for (int i = 0; i < (ticks*numValues); i ++ ) {
             ccMsg =
             ccMsg.controllerEvent(1, midiCC,
-                                  uint8_t(lerp(val1, val2, (double(i)/double(tickStep))/(double(ticks)*double(numValues)),isUp ) ) );
-            ccMsg.addToTimeStamp((double(i)/double(tickStep)) + (j*ticks*numValues));
+                                  uint8_t(lerp(val1, val2, double(i)/(double(ticks)*double(numValues)),isUp ) ) );
+            ccMsg.addToTimeStamp(i + (j*ticks*numValues));
             seq.addEvent(ccMsg);
         }
     } 
@@ -144,11 +154,11 @@ juce::MidiMessageSequence writeSequence(std::vector<unsigned int> &values, int m
         double val2 = values[(j+1)%numValues];
         bool isUp = val1 < val2;
          
-        for (int i = 0; i < (ticks*numValues); i+= tickStep) {
+        for (int i = 0; i < (ticks*numValues); i++) {
             ccMsg =
             ccMsg.controllerEvent(1, midiCC,
-                                  uint8_t(lerp(val1, val2, (double(i)/double(tickStep))/(double(ticks)*double(numValues)),isUp ) ) );
-            ccMsg.addToTimeStamp((double(i)/double(tickStep)) + (j*ticks*numValues));
+                                  uint8_t(lerp(val1, val2, double(i)/(double(ticks)*double(numValues)),isUp ) ) );
+            ccMsg.addToTimeStamp(i + (j*ticks*numValues));
             seq.addEvent(ccMsg);
         }
     } 

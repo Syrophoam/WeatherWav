@@ -96,7 +96,8 @@ json requestMS(std::map<std::string,float> pos, int repeats, int timeGap){ // me
         "air.visibility","air.humidity.at-2m","air.pressure.at-sea-level","air.temperature.at-2m",
         "atmosphere.convective.potential.energy",
         "cloud.cover","precipitation.rate","radiation.flux.downward.longwave",
-        "radiation.flux.downward.shortwave", "wind.direction.at-10m","wind.direction.at-100m"}; 
+        "radiation.flux.downward.shortwave",
+        "wind.direction.at-10m", "wind.speed.at-10m","wind.speed.eastward.at-10m", "wind.speed.northward.at-10m" }; 
     jsonReq["variables"] = variables;
     
     const auto now = std::chrono::system_clock::now();
@@ -133,8 +134,7 @@ json requestMS(std::map<std::string,float> pos, int repeats, int timeGap){ // me
     return jsonReq;
 }
 
-//void fillStruct(json data, openWeather strct[]){
-    void fillStruct(json data, struct openWeather &OWVec, int size){
+void fillStruct(json data, struct openWeather &OWVec, int size){
         
         
         OWVec.dt.resize(size);
@@ -157,7 +157,7 @@ json requestMS(std::map<std::string,float> pos, int repeats, int timeGap){ // me
         OWVec.sysPod.resize(size);
         OWVec.rain3h.resize(size);
         OWVec.snow3h.resize(size);
-        
+         
         
         
     for(int i = 0; i < size; i++){

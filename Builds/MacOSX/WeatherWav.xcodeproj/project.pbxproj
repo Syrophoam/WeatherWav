@@ -99,7 +99,7 @@
 		52C283812CBA9F8B0045CFAF /* libpanelw.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpanelw.6.dylib; path = ../../../../../opt/homebrew/Cellar/ncurses/6.5/lib/libpanelw.6.dylib; sourceTree = "<group>"; };
 		5C0ED0E71F27C4B019BE3D36 /* include_juce_gui_extra.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_gui_extra.mm; path = ../../JuceLibraryCode/include_juce_gui_extra.mm; sourceTree = SOURCE_ROOT; };
 		61BC88CC29248C8CF8FFC56D /* include_juce_audio_basics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_basics.mm; path = ../../JuceLibraryCode/include_juce_audio_basics.mm; sourceTree = SOURCE_ROOT; };
-		6F31C4ECDEAD87C914FD26C5 /* Main.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Main.hpp; path = ../../Source/Main.hpp; sourceTree = SOURCE_ROOT; };
+		6F31C4ECDEAD87C914FD26C5 /* Main.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Main.hpp; path = ../../Source/Main.hpp; sourceTree = SOURCE_ROOT; };
 		746FA64ABAFAC498C2D9CF70 /* juce_data_structures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_data_structures; path = /Users/syro/Downloads/JUCE/modules/juce_data_structures; sourceTree = "<absolute>"; };
 		789215325DA7609A94E75097 /* API.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = API.h; path = ../../Source/API.h; sourceTree = SOURCE_ROOT; };
 		78C403F7480A68F70A81DA05 /* juce_graphics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_graphics; path = /Users/syro/Downloads/JUCE/modules/juce_graphics; sourceTree = "<absolute>"; };
@@ -631,7 +631,7 @@
 					/opt/homebrew/Cellar/ncurses/6.5/lib,
 				);
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode /Users/syro/Downloads/JUCE/modules /opt/homebrew/Cellar/nlohmann-json/3.11.3/include";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.WeatherWav;
 				PRODUCT_NAME = WeatherWav;

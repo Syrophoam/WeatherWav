@@ -43,7 +43,7 @@ void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::
 
     std::vector<double> airVisibility, airHumidity, airPressure, airTemperature, airCAPE;
     std::vector<double> cloudCover, cloudBase;
-    std::vector<double> windSpeedEast, windSpeedWest, windSpeedGust;
+    std::vector<double> windSpeedEast, windSpeedNorth, windDirection, windSpeed;
     std::vector<double> fluxPrecipitation, fluxRadiationLongwave, fluxRadiationShortwave;
     std::vector<double> currentSpeedNorth, currentSpeedEast, currentSpeedNorthBarotropic, currentSpeedEastBarotropic;
     std::vector<double> seaDepthSurface, seaDepthSeaLevel, seaTempurature;
@@ -56,13 +56,16 @@ void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::
         airTemperature = normalizeValues(variables["air.temperature.at-2m"]["data"]);
         airCAPE = normalizeValues(variables["atmosphere.convective.potential.energy"]["data"]);
         
-//        cloudBase = normalizeValues(variables["cloud.base.height"]["data"]);
-        cloudBase = {0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0};
+        cloudBase = normalizeValues(variables["cloud.base.height"]["data"]);
         cloudCover = normalizeValues(variables["cloud.cover"]["data"]);
         
-        windSpeedEast = normalizeValues(variables["wind.speed.eastward.at-10m"]["data"]);
-        windSpeedWest = normalizeValues(variables["wind.speed.westward.at-10m"]["data"]);
-        windSpeedGust = normalizeValues(variables["wind.speed.gust.at-10m"]["data"]);
+    
+    
+    windSpeedEast = normalizeValues(variables["wind.speed.eastward.at-10m"][";data"]);
+    windSpeedNorth = normalizeValues(variables["wind.speed.northward.at-10m"]["data"]);
+    windDirection = normalizeValues(variables["wind.direction.at-10m"]["data"]);
+    windSpeed = normalizeValues(variables    ["wind.speed.at-10m"]["data"]);
+
         
         fluxPrecipitation = normalizeValues(variables["precipitation.rate"]["data"]);
         fluxRadiationLongwave = normalizeValues(variables["radiation.flux.downward.longwave"]["data"]);
@@ -74,7 +77,7 @@ void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::
         
         variableGroup[0] = {airVisibility,airHumidity,airPressure,airTemperature,airCAPE};
         variableGroup[1] = {cloudCover};
-        variableGroup[2] = {windSpeedEast,windSpeedWest,windSpeedGust};
+        variableGroup[2] = {windSpeedEast,windSpeedNorth,windDirection, windSpeed};
         variableGroup[3] = {fluxPrecipitation, fluxRadiationLongwave, fluxRadiationShortwave};
         variableGroup[4] = {waveDirectionMean, wavePeriodPeak, waveHeight};
 }
