@@ -84,7 +84,6 @@ mem_cb(void *contents, size_t size, size_t nmemb, void *userp)
   return realsize;
 }
 
-
 json requestMS(std::map<std::string,float> pos, int repeats, int timeGap){ // metservice
     json jsonReq = {};
 

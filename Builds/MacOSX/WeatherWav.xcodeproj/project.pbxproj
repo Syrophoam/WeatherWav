@@ -17,10 +17,6 @@
 		52811CA42CA9322600EC75D2 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 52811CA32CA9321C00EC75D2 /* libcurl.tbd */; };
 		52C283772CBA6D920045CFAF /* rply.c in Sources */ = {isa = PBXBuildFile; fileRef = 52C283742CBA6D920045CFAF /* rply.c */; };
 		52C283782CBA6D920045CFAF /* rplycpp_reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C283752CBA6D920045CFAF /* rplycpp_reader.cpp */; };
-		52C2837E2CBA9EB30045CFAF /* libncursesw.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C2837D2CBA9EB30045CFAF /* libncursesw.6.dylib */; };
-		52C2837F2CBA9EB30045CFAF /* libncursesw.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 52C2837D2CBA9EB30045CFAF /* libncursesw.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		52C283822CBA9F8B0045CFAF /* libpanelw.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C283812CBA9F8B0045CFAF /* libpanelw.6.dylib */; };
-		52C283832CBA9F8B0045CFAF /* libpanelw.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 52C283812CBA9F8B0045CFAF /* libpanelw.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		587E6320E49976666E02E405 /* DiscRecording.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAE6BDEF4C954D4012C9A809 /* DiscRecording.framework */; };
 		615057A5720304BB6D7F0B6D /* include_juce_dsp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 82017B5A94A11744036EE62D /* include_juce_dsp.mm */; };
 		637F709B276C19FA8368C42A /* audioMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5030CF1F49C6C3506B1B1973 /* audioMain.cpp */; };
@@ -48,21 +44,6 @@
 		EFAB2817C7FDDAA1BB62C97E /* include_juce_audio_processors.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2A8B098804BA0B3003792BDB /* include_juce_audio_processors.mm */; };
 		FBDB0807ABDD2D319302DD51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 473CB3FE3185AECF7B16B1BF /* Foundation.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		52C283802CBA9EB30045CFAF /* Embed Libraries */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				52C2837F2CBA9EB30045CFAF /* libncursesw.6.dylib in Embed Libraries */,
-				52C283832CBA9F8B0045CFAF /* libpanelw.6.dylib in Embed Libraries */,
-			);
-			name = "Embed Libraries";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		03AB844CE5300BB6AE5E1D7B /* juce_audio_devices */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_devices; path = /Users/syro/Downloads/JUCE/modules/juce_audio_devices; sourceTree = "<absolute>"; };
@@ -146,12 +127,10 @@
 				AE547A13BFCCEFD4F37B54FE /* Cocoa.framework in Frameworks */,
 				E3B3B0FCAB904E7B07B65E54 /* CoreAudio.framework in Frameworks */,
 				3F33E8648BBA2B7B42C4F881 /* CoreAudioKit.framework in Frameworks */,
-				52C283822CBA9F8B0045CFAF /* libpanelw.6.dylib in Frameworks */,
 				063112DFA60958BDD3F86ED3 /* CoreMIDI.framework in Frameworks */,
 				587E6320E49976666E02E405 /* DiscRecording.framework in Frameworks */,
 				FBDB0807ABDD2D319302DD51 /* Foundation.framework in Frameworks */,
 				C0E26C3E2AEDC42E1E7E69CA /* IOKit.framework in Frameworks */,
-				52C2837E2CBA9EB30045CFAF /* libncursesw.6.dylib in Frameworks */,
 				A64A997F5C342613E1F95214 /* QuartzCore.framework in Frameworks */,
 				78D9E2617F59CBCB9717052E /* Security.framework in Frameworks */,
 				31486A98EC43C92CEEC4DBE6 /* WebKit.framework in Frameworks */,
@@ -329,7 +308,6 @@
 				6ECCA80F762345FDF7AE3E8B /* Resources */,
 				23320E6DF728D8A72EEC673F /* Sources */,
 				2E326B0D9C06A95CC3E2C7B1 /* Frameworks */,
-				52C283802CBA9EB30045CFAF /* Embed Libraries */,
 			);
 			buildRules = (
 			);

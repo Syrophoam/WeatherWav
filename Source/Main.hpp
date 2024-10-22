@@ -510,8 +510,6 @@ void *mainFunc(void* input){
         normalizeResponseInt(OWVec.visibility);
     }
     
-//    free(data);// idk why this was here, mabye important? 
-    
     //----- MIDI ------//
     std::cout<<"Writing midi file..."<< std::endl;
     std::string midiPath_S = "/Users/syro/WeatherWav/Media/";
@@ -524,21 +522,17 @@ void *mainFunc(void* input){
     midiFile.setTicksPerQuarterNote(48); // multiply to make track shorter
     juce::StringRef name;
     
-    if(weatherService == METSERVICE){ 
- 
+    if(weatherService == METSERVICE){
         
         juce::MidiMessageSequence air;
-        std::cout<<"group write sequence"<<std::endl;
         air.addSequence(groupWriteSequence(variableGroup[0]),0);
         air.addEvent(juce::MidiMessage::textMetaEvent(3, "Air"));
         midiFile.addTrack(air);
-        std::cout<<"group write sequence Done"<<std::endl;
         
         juce::MidiMessageSequence cloud;
         cloud.addSequence(groupWriteSequence(variableGroup[1]),0);
         cloud.addEvent(juce::MidiMessage::textMetaEvent(3, "Cloud"));
         midiFile.addTrack(cloud);
-        std::cout<<"cloud"<<std::endl;
         
         juce::MidiMessageSequence wind;
         wind.addSequence(groupWriteSequence(variableGroup[2]),0);
@@ -554,8 +548,6 @@ void *mainFunc(void* input){
         wave.addSequence(groupWriteSequence(variableGroup[4]),0);
         wave.addEvent(juce::MidiMessage::textMetaEvent(3, "Waves"));
         midiFile.addTrack(wave);
-        
-//        midiFile.addTrack(addMidiFile(0,4));
         
     }
     
@@ -583,10 +575,8 @@ void *mainFunc(void* input){
         writeSequence(OWVec.snow3h, 1);
     }
     
-    std::cout<<"making stream"<<std::endl;
     juce::FileOutputStream stream = juce::File(midiPath_S.data());
     
-    std::cout<<"Opening Stream"<<std::endl;
     if(stream.openedOk()){
         midiFile.writeTo(stream);
     }else{
@@ -595,6 +585,8 @@ void *mainFunc(void* input){
     std::cout<<"Written midi file"<<std::endl;
     
     mainT->b = 1;
+    
+    free(chunk.memory);
     
     pthread_exit(NULL);
     return 0;
