@@ -21,8 +21,8 @@
 //#include <ncurses.h>
 //#include <panel.h>
 
-#include "/Users/syro/Desktop/xcode/3dRendererLib/FINAL/libs/include/rply/my_types.hpp"
-#include "/Users/syro/Desktop/xcode/3dRendererLib/FINAL/libs/include/rply/rplycpp.hpp"
+//#include "/Users/syro/Desktop/xcode/3dRendererLib/FINAL/libs/include/rply/my_types.hpp"
+//#include "/Users/syro/Desktop/xcode/3dRendererLib/FINAL/libs/include/rply/rplycpp.hpp"
 
 #define PlaneX 0.0f
 #define PlaneY -1.0f

@@ -36,25 +36,22 @@ std::unique_ptr<juce::MidiOutput> midiO = nullptr;
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-    // This function will be called when the audio device is started, or when
-    // its settings (i.e. sample rate, block size, etc) are changed.
 
-    // You can use this function to initialise any resources you might need,
-    // but be careful - it will be called on the audio thread, not the GUI thread.
-
-    // For more details, see the help for AudioProcessor::prepareToPlay()
     sampleRateG = sampleRate;
     pthread_create(&t, NULL, mainFunc, (void *)&mainT); 
     mainT.a = 0;
     
     // look at this https://docs.juce.com/master/tutorial_handling_midi_events.html
     juce::Array<juce::MidiDeviceInfo> devLs = juce::MidiOutput::getAvailableDevices();
-    juce::String devId = devLs[0].identifier;
+    juce::String devId = devLs[0].identifier; // add optional midi out device
     midiO = juce::MidiOutput::openDevice(devId);
     midiO->startBackgroundThread();
+    
     std::cout<<devLs[0].name<<std::endl;
     
     midiO->clearAllPendingMessages();
+    timeSent = 0;
+    mainT.bufferOffest = 0;
  
 }
 
@@ -69,33 +66,18 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
     bufferToFill.clearActiveBufferRegion();
     auto* leftBuffer  = bufferToFill.buffer->getWritePointer (0, bufferToFill.startSample);
     auto* rightBuffer = bufferToFill.buffer->getWritePointer (1, bufferToFill.startSample);
-    juce::Time miliSecCounter;
-//    fbEnv += double(mainT.b)/2.f;
-    
-    
-    juce::MidiBuffer midiBuf;
-    midiBuf.addEvent(juce::MidiMessage::noteOn(1, 30, uint8_t(60)), 0);
-    midiBuf.addEvent(juce::MidiMessage::noteOff(1, 30),100);
-    
-    midiBuf.addEvent(juce::MidiMessage::noteOn(1, 37, uint8_t(60)), 5000);
-    midiBuf.addEvent(juce::MidiMessage::noteOff(1, 37),7500);
+
     
     if(mainT.sendMsg){
         mainT.sendMsg = false;
-        midiO->sendBlockOfMessages(mainT.midiBuffer, miliSecCounter.getMillisecondCounter()+1, sampleRateG);
-    }
         
-    int deltaCC = - 1;
+        midiO->sendBlockOfMessages(mainT.midiBuffer, juce::Time::getMillisecondCounter(), 44100);
+        mainT.bufferOffest += 44100 * 60;
+        
+    }
+    
     for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
         {
-            
-//            if(mainT.msg.isController()){
-//                if(mainT.msg.getControllerValue()!= deltaCC){
-//                    midiO->sendMessageNow(mainT.msg);
-//                    deltaCC = mainT.msg.getControllerValue();
-//                } 
-//            }
-            
             
             if (mainT.b == 1) {
                 mainT.b = 0;
@@ -106,7 +88,6 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
             ramp = double(cnt)/double(sampleRateG);
             ramp = fmod(ramp*440, 1.f);
             
-//            fbEnv -= .0001f;
             fbEnv *= 0.9998f;
             
             fbEnv = fmax(fbEnv, 0.f);
@@ -117,16 +98,14 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
             }
             sin /= 8.f;
             
-            leftBuffer[sample]  = sin  * fbEnv;
+            leftBuffer[sample]  = sin * fbEnv;
             rightBuffer[sample] = sin * fbEnv;
                 
             cnt ++;
             cnt %= sampleRateG;
         }
-//    pthread_join(t, NULL); idk where to put this, surley not here
-    
-
 }
+
 
 
 void MainComponent::releaseResources()

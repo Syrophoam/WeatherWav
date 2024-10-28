@@ -39,7 +39,7 @@ std::vector<double> normalizeValues(nlohmann::json values){
 // make option to normalize values based on the max value in array OR max possible value in API
 
 
-void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::json variables){
+void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::json variables, bool ambientMode){
 
     std::vector<double> airVisibility, airHumidity, airPressure, airTemperature, airCAPE;
     std::vector<double> cloudCover, cloudBase;
@@ -50,36 +50,34 @@ void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::
     std::vector<double> waveDirectionMean, wavePeriodPeak, waveHeight;
         
     
-        airVisibility = normalizeValues(variables["air.visibility"]["data"]);
-        airHumidity = normalizeValues(variables["air.humidity.at-2m"]["data"]);
-        airPressure =  normalizeValues(variables["air.pressure.at-sea-level"]["data"]);
-        airTemperature = normalizeValues(variables["air.temperature.at-2m"]["data"]);
-        airCAPE = normalizeValues(variables["atmosphere.convective.potential.energy"]["data"]);
-        
-        cloudBase = normalizeValues(variables["cloud.base.height"]["data"]);
-        cloudCover = normalizeValues(variables["cloud.cover"]["data"]);
-        
+    airVisibility =         normalizeValues(variables["air.visibility"]                         ["data"]);
+    airHumidity =           normalizeValues(variables["air.humidity.at-2m"]                     ["data"]);
+    airPressure =           normalizeValues(variables["air.pressure.at-sea-level"]              ["data"]);
+    airTemperature =        normalizeValues(variables["air.temperature.at-2m"]                  ["data"]);
+    airCAPE =               normalizeValues(variables["atmosphere.convective.potential.energy"] ["data"]);
+    
+    cloudBase =             normalizeValues(variables["cloud.base.height"]                      ["data"]);
+    cloudCover =            normalizeValues(variables["cloud.cover"]                            ["data"]);
+    
+    windSpeedEast =         normalizeValues(variables["wind.speed.eastward.at-10m"]             ["data"]);
+    windSpeedNorth =        normalizeValues(variables["wind.speed.northward.at-10m"]            ["data"]);
+    windDirection =         normalizeValues(variables["wind.direction.at-10m"]                  ["data"]);
+    windSpeed =             normalizeValues(variables    ["wind.speed.at-10m"]                  ["data"]);
+    
+    fluxPrecipitation =     normalizeValues(variables["precipitation.rate"]                     ["data"]);
+    fluxRadiationLongwave = normalizeValues(variables["radiation.flux.downward.longwave"]       ["data"]);
+    fluxRadiationShortwave= normalizeValues(variables["radiation.flux.downward.shortwave"]      ["data"]);
+    
+    waveDirectionMean =     normalizeValues(variables["wave.direction.mean"]                    ["data"]);
+    wavePeriodPeak =        normalizeValues(variables["wave.period.peak"]                       ["data"]);
+    waveHeight =            normalizeValues(variables["wave.height"]                            ["data"]);
     
     
-    windSpeedEast = normalizeValues(variables["wind.speed.eastward.at-10m"][";data"]);
-    windSpeedNorth = normalizeValues(variables["wind.speed.northward.at-10m"]["data"]);
-    windDirection = normalizeValues(variables["wind.direction.at-10m"]["data"]);
-    windSpeed = normalizeValues(variables    ["wind.speed.at-10m"]["data"]);
-
-        
-        fluxPrecipitation = normalizeValues(variables["precipitation.rate"]["data"]);
-        fluxRadiationLongwave = normalizeValues(variables["radiation.flux.downward.longwave"]["data"]);
-        fluxRadiationShortwave= normalizeValues(variables["radiation.flux.downward.shortwave"]["data"]);
-        
-        waveDirectionMean = normalizeValues(variables["wave.direction.mean"]["data"]);
-        wavePeriodPeak = normalizeValues(variables["wave.period.peak"]["data"]);
-        waveHeight = normalizeValues(variables["wave.height"]["data"]);
-        
-        variableGroup[0] = {airVisibility,airHumidity,airPressure,airTemperature,airCAPE};
-        variableGroup[1] = {cloudCover};
-        variableGroup[2] = {windSpeedEast,windSpeedNorth,windDirection, windSpeed};
-        variableGroup[3] = {fluxPrecipitation, fluxRadiationLongwave, fluxRadiationShortwave};
-        variableGroup[4] = {waveDirectionMean, wavePeriodPeak, waveHeight};
+    variableGroup[0] = {airVisibility,airHumidity,airPressure,airTemperature,airCAPE};
+    variableGroup[1] = {cloudCover};
+    variableGroup[2] = {windSpeedEast,windSpeedNorth,windDirection, windSpeed};
+    variableGroup[3] = {fluxPrecipitation, fluxRadiationLongwave, fluxRadiationShortwave};
+    variableGroup[4] = {waveDirectionMean, wavePeriodPeak, waveHeight};
 }
 
 void normalizeResponseInt(std::vector<unsigned int> &values){

@@ -103,21 +103,25 @@ json requestMS(std::map<std::string,float> pos, int repeats, int timeGap){ // me
     
     std::string currentTime;
     //currentTime = "2024-09-23T06:15:00Z";
-    currentTime = std::format("{:%FT%H:%M:00Z}", now);
+    currentTime = std::format("{:%FT%H:%M:00Z}", now); // <-behind an hour , daylight savings?
+    std::cout<<currentTime<<std::endl;
+    
     
     std::string timeGapString;
-    switch (timeGap) {
-        case 0:{
-            timeGapString = "1h";
-            break;
-        }
-        case 1:{
-            timeGapString = "1m";
-        }
-            
-        default:
-            break;
-    }
+//    switch (timeGap) {
+//        case 0:{
+//            timeGapString = "1h";
+//            break;
+//        }
+//        case 1:{
+//            timeGapString = "1m";
+//        }
+//            
+//        default:
+//            break;
+//    }
+    
+    timeGap ? timeGapString = "1m" : timeGapString = "1h";
     
     std::map time = std::map<std::string, std::string>{
         {"from",currentTime}, {"interval",timeGapString}
@@ -125,9 +129,6 @@ json requestMS(std::map<std::string,float> pos, int repeats, int timeGap){ // me
     
     jsonReq["time"] = time;
     
-    //int repeats = 4;
-    std::cout << "repeats" << std::endl;
-    //std::cin >> repeats;
     jsonReq["time"]["repeat"] = repeats; // repeats
     
     return jsonReq;
