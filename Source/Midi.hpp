@@ -33,8 +33,6 @@ juce::MidiMessageSequence readMidi(std::string filePath, int trackIndex){
     juce::MidiMessageSequence::MidiEventHolder **eventHolder;
     eventHolder = seq.begin();
     
-    
-    
     return seq;
 }
 
@@ -106,7 +104,7 @@ juce::MidiMessageSequence groupWriteSequence(std::vector<std::vector<double>> gr
         }
         mainSeq.addSequence(seq, 0);
     }
-    juce::MidiMessageSequence fileSeq = readMidi("/Users/syrofullerton/WeatherWav/Media/exampleInputMidi.mid",0);
+    juce::MidiMessageSequence fileSeq = readMidi("/Users/syro/WeatherWav/Media/exampleInputMidi.mid",0);
     
     juce::MidiMessageSequence loopedSeq;
     loopedSeq.addSequence(loopMidiSequence(fileSeq, 8, ticks, 4), 0);

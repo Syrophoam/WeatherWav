@@ -1,4 +1,7 @@
 #include <JuceHeader.h>
+#include <fstream>
+#include <iostream>
+#include <cstring>
 #include "Midi.hpp"
 #include "GUI.hpp"
 #include "utils.h"
@@ -82,11 +85,43 @@ void *keyListenrFunction(void *input){
     // if you can automatiocaly return cin this would work
 }
 
-
-
-
-void *mainFunc(void* input){
-    bool ambientMode = true;
+void *main_t(void* input){
+    
+     std::cout<< "amb_mode ? user.pressedY() : user.pressedN()"<<std::endl;
+     char usr = NULL;
+     std::cin>>usr;
+     
+     bool ambientMode;
+     if((usr == 'Y') || (usr == 'y'))
+     {
+         ambientMode = true;
+     }
+     else if((usr == 'N') || (usr == 'N'))
+     {
+         ambientMode = false;
+     }
+    
+    std::ofstream dayVal;
+    dayVal.open("/Users/syro/WeatherWav/Media/dayValData");
+    std::string dayValDate;
+//    while ( dayVal >> dayValDate ){
+//        
+//        
+//    }
+//    
+    const auto now = std::chrono::system_clock::now();
+    std::string currentTime;
+    currentTime = std::format("{:%FT%H:%M:00Z}", now); // <-behind an hour , daylight savings ?
+//    std::string fileDays = fileDay.;
+//    bool equal = false;
+//    for(int i = 0; i < 10; i++){
+//        if(fileDay[i] == ){
+//            
+//        }
+//            
+//    }//
+    // <> make file of the next predicted 24 hours to find peak to normalize live values;
+    // dumb ? just run it once to init norm values
     
     //- seperate thread init -//
     mainThread *mainT=(mainThread *)input;
@@ -331,7 +366,7 @@ void *mainFunc(void* input){
     struct curl_slist *headers = NULL;
     CURLcode res;
     
-    if(!ambientMode){
+//    if(!ambientMode){
         
         char error[CURL_ERROR_SIZE]; /* needs to be at least this big */
         
@@ -385,19 +420,17 @@ void *mainFunc(void* input){
         curl_easy_cleanup(handle);
         curl_slist_free_all(headers);
         jsonResponse = json::parse(chunk.memory);
-        
-    }
     
-
+    
+    initNorm(jsonResponse);
+    
+    NULL ? NULL : NULL; // <- valid c++ ??
+    
     //----- ambient version? -//
-    
     CURL *handle2 = curl_easy_init();
     struct curl_slist *headers2 = NULL;
     unsigned int valCounter = 0;
     json ambJson;
-//    struct response ambChunk = {.memory = (char *)malloc(0),
-//                             .size = 0};
-    
     
     while(ambientMode){
         
@@ -423,21 +456,18 @@ void *mainFunc(void* input){
         res = curl_easy_perform(handle2);
         
         ambJson = json::parse(ambChunk.memory);
-//        printf("Page data:\n\n%s\n", ambChunk.memory);
-        
         free(ambChunk.memory);
         
+        normalizeAmb(ambJson);
         
         std::vector<std::vector<double>> variableGroup[5];
         
-        formatResponse(variableGroup, ambJson["variables"], ambientMode);
         
-        
+//        formatResponse(variableGroup, ambJson["variables"]);
         
         juce::MidiBuffer ambBuff;
+        ambBuff.clear();
         //allocate space later ^
-        
-//        ambBuff.clear();
         
         ambBuff.addEvents(groupWriteSequenceAmb(variableGroup[0], mainT->bufferOffest, 1), 0, 44100 * 60, 0);
         ambBuff.addEvents(groupWriteSequenceAmb(variableGroup[1], mainT->bufferOffest, 2), 0, 44100 * 60, 0);
@@ -454,10 +484,10 @@ void *mainFunc(void* input){
         std::this_thread::sleep_for(std::chrono::seconds(60)); // use chrono sleep to account for the time curl and midi code takes
     }
 
-    if(ambientMode){
+//    if(ambientMode){
         curl_easy_cleanup(handle2);
         curl_slist_free_all(headers2);
-    }
+//    }
     
     //----- JSON - Recieve ------//
     std::cout<<"parsing Data"<<std::endl;
@@ -465,7 +495,7 @@ void *mainFunc(void* input){
     std::vector<std::vector<double>> variableGroup[5];
     
     if(weatherService == METSERVICE)
-        formatResponse(variableGroup, jsonResponse["variables"], ambientMode);
+        formatResponse(variableGroup, jsonResponse["variables"]);
   
     struct openWeather OWVec;
     
@@ -502,18 +532,23 @@ void *mainFunc(void* input){
     //----- MIDI ------//
     std::cout<<"Writing midi file..."<< std::endl;
     std::string midiPath_S = "/Users/syro/WeatherWav/Media/";
-    midiPath_S = "/Users/syrofullerton/WeatherWav/Media";
-    std::string midiPath = "midi.mid";
+//    midiPath_S = "/Users/syrofullerton/WeatherWav/Media";
+    std::string midiPath = "weatherWavO_";
+
+    std::string::iterator currentTimeIter = currentTime.end();
+    currentTime.erase(currentTimeIter - 10, currentTimeIter);
+    midiPath += currentTime;
+    midiPath += ".mid";
     midiPath_S += midiPath;
-    
-    std::remove(midiPath_S.data());
+
+//    std::remove(midiPath_S.data());
 
     juce::MidiFile midiFile;
-    midiFile.setTicksPerQuarterNote(48); // multiply to make track shorter
+    
+    midiFile.setTicksPerQuarterNote(48 * 10); // multiply to make track shorter
     juce::StringRef name;
     
     if(weatherService == METSERVICE){
-        
         
         juce::MidiMessageSequence air;
         air.addSequence(groupWriteSequence(variableGroup[0]),0);
@@ -566,9 +601,11 @@ void *mainFunc(void* input){
         writeSequence(OWVec.snow3h, 1);
     }
     
+    
     juce::FileOutputStream stream = juce::File(midiPath_S.data());
     
     if(stream.openedOk()){
+        
         midiFile.writeTo(stream);
     }else{
         std::cout<<"failed to open stream"<<std::endl;

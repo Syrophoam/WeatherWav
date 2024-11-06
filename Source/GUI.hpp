@@ -150,7 +150,7 @@ std::string bitMapView(
             
             pixVal = double(pixVal)/(256.f);
             
-            int random = rand()%100;
+//            int random = rand()%100;
 
 //            if(random > 20){
 //                frame += blockScale[int(pixVal*5)];

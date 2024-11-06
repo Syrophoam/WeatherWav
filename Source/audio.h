@@ -21,7 +21,8 @@ typedef struct mainThread {
     juce::MidiMessageSequence midiSeq;
     unsigned long bufferOffest;
     
-} test;
+} /* test */ ;
+
 
 void *mainThreadFunc(void* input){
 

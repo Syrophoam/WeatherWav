@@ -38,7 +38,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 {
 
     sampleRateG = sampleRate;
-    pthread_create(&t, NULL, mainFunc, (void *)&mainT); 
+    pthread_create(&t, NULL, main_t, (void *)&mainT); 
     mainT.a = 0;
     
     // look at this https://docs.juce.com/master/tutorial_handling_midi_events.html

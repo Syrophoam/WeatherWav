@@ -94,7 +94,7 @@ json requestMS(std::map<std::string,float> pos, int repeats, int timeGap){ // me
     {"wave.height","wave.period.peak","wave.direction.mean",
         "air.visibility","air.humidity.at-2m","air.pressure.at-sea-level","air.temperature.at-2m",
         "atmosphere.convective.potential.energy",
-        "cloud.cover","precipitation.rate","radiation.flux.downward.longwave",
+        "cloud.cover","cloud.base.height","precipitation.rate","radiation.flux.downward.longwave",
         "radiation.flux.downward.shortwave",
         "wind.direction.at-10m", "wind.speed.at-10m","wind.speed.eastward.at-10m", "wind.speed.northward.at-10m" }; 
     jsonReq["variables"] = variables;

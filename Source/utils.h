@@ -5,9 +5,9 @@
 //  Created by Syro Fullerton on 23/09/2024.
 //
 //#include "API.h" 
+using namespace nlohmann;
 
-
-std::vector<double> normalizeValues(nlohmann::json values){
+std::vector<double> normalizeValues(json values){
     
     unsigned long size = values.size();
     
@@ -36,10 +36,96 @@ std::vector<double> normalizeValues(nlohmann::json values){
     }
     return normalizedValues;
 }
-// make option to normalize values based on the max value in array OR max possible value in API
+
+void findMinMax(json values, double &min, double &max){
+    
+    unsigned long size = values.size();
+    
+    max = -std::numeric_limits<double>::max();
+    min = std::numeric_limits<double>::max();
+    
+    for(int i = 0; i < size; i++){
+        double buff = values[i];
+        
+        if(buff > max){
+            max = buff;
+        }
+        if(buff < min){
+            min = buff;
+        }
+    }
+}
+struct variableMinMax {
+    uint32_t minMax;
+    std::string identifier;
+    
+    double min;
+    double max;
+};
+
+std::vector<variableMinMax> minMaxVec;
+
+void initNorm(json data){
+    
+    json variables = data["variables"];
+    
+    json numVari = variables.size();
+    json::iterator dataIter = variables.begin();
+    
+    for(int i = 0; i < numVari; i++){
+        json vari = dataIter.value();
+        variableMinMax variInfo;
+        
+        findMinMax(vari["data"], variInfo.min, variInfo.max);
+        variInfo.identifier = vari["standardName"];
+        minMaxVec.push_back(variInfo);
+        
+//      std::cout<<uint16_t(minMax)<<std::endl;
+//      std::cout<<uint16_t(minMax >> 16)<<std::endl;
+        
+        dataIter ++;
+    }
+}
+
+void uncoupleValues(u_int16_t val, u_int8_t &valA, u_int8_t &valB){
+    valA = u_int8_t(val);   valB = (val >> 16);
+}
+
+void coupleValues(u_int16_t &val, u_int8_t valA, u_int8_t valB){
+    val = valA;             val += valB << 16;
+}
+
+u_int16_t normalizeAmb(json data){
+    
+    json variables = data["variables"];
+    
+    json numVari = variables.size();
+    json::iterator dataIter = variables.begin();
+    
+    for(int i = 0; i < numVari; i++){
+        json vari1 = dataIter.value()["data"][0];
+        json vari2 = dataIter.value()["data"][1];
+        
+        double min = minMaxVec[i].min;
+        double max = minMaxVec[i].max;
+        
+        double delta = max - min;
+        
+        double normVal = 0;
+        
+            
+        normVal = double(vari1) - min;
+        normVal = normVal / delta;
+        normVal *= 127;
+        
+        dataIter ++;
+    }
+    
+    return 0;
+}
 
 
-void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::json variables, bool ambientMode){
+void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::json variables){
 
     std::vector<double> airVisibility, airHumidity, airPressure, airTemperature, airCAPE;
     std::vector<double> cloudCover, cloudBase;
@@ -62,7 +148,7 @@ void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::
     windSpeedEast =         normalizeValues(variables["wind.speed.eastward.at-10m"]             ["data"]);
     windSpeedNorth =        normalizeValues(variables["wind.speed.northward.at-10m"]            ["data"]);
     windDirection =         normalizeValues(variables["wind.direction.at-10m"]                  ["data"]);
-    windSpeed =             normalizeValues(variables    ["wind.speed.at-10m"]                  ["data"]);
+    windSpeed =             normalizeValues(variables["wind.speed.at-10m"]                      ["data"]);
     
     fluxPrecipitation =     normalizeValues(variables["precipitation.rate"]                     ["data"]);
     fluxRadiationLongwave = normalizeValues(variables["radiation.flux.downward.longwave"]       ["data"]);
@@ -74,7 +160,7 @@ void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::
     
     
     variableGroup[0] = {airVisibility,airHumidity,airPressure,airTemperature,airCAPE};
-    variableGroup[1] = {cloudCover};
+    variableGroup[1] = {cloudCover, cloudBase};
     variableGroup[2] = {windSpeedEast,windSpeedNorth,windDirection, windSpeed};
     variableGroup[3] = {fluxPrecipitation, fluxRadiationLongwave, fluxRadiationShortwave};
     variableGroup[4] = {waveDirectionMean, wavePeriodPeak, waveHeight};
