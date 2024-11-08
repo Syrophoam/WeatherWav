@@ -79,9 +79,7 @@ void initNorm(json data){
         findMinMax(vari["data"], variInfo.min, variInfo.max);
         variInfo.identifier = vari["standardName"];
         minMaxVec.push_back(variInfo);
-        
-//      std::cout<<uint16_t(minMax)<<std::endl;
-//      std::cout<<uint16_t(minMax >> 16)<<std::endl;
+
         
         dataIter ++;
     }
@@ -95,33 +93,39 @@ void coupleValues(u_int16_t &val, u_int8_t valA, u_int8_t valB){
     val = valA;             val += valB << 16;
 }
 
-u_int16_t normalizeAmb(json data){
+std::vector<std::vector<double>> normalizeAmb(json data){
     
     json variables = data["variables"];
     
     json numVari = variables.size();
     json::iterator dataIter = variables.begin();
+    std::vector<double> normalizedValuesA;
+    std::vector<double> normalizedValuesB;
+    std::vector<std::vector<double>> normalizedValues(2);
     
     for(int i = 0; i < numVari; i++){
-        json vari1 = dataIter.value()["data"][0];
-        json vari2 = dataIter.value()["data"][1];
+        double vari1 = dataIter.value()["data"][0];
+        double vari2 = dataIter.value()["data"][1];
+        std::string variName = minMaxVec[i].identifier;
         
         double min = minMaxVec[i].min;
         double max = minMaxVec[i].max;
         
         double delta = max - min;
         
-        double normVal = 0;
+        double normValA, normValB;
+        normValA = (vari1 - min) / (max - min) * 127;
+        normValB = (vari2 - min) / (max - min) * 127;
         
-            
-        normVal = double(vari1) - min;
-        normVal = normVal / delta;
-        normVal *= 127;
+        normalizedValuesA.push_back(normValA);
+        normalizedValuesB.push_back(normValB);
         
         dataIter ++;
     }
+    normalizedValues[0] = normalizedValuesA;
+    normalizedValues[1] = normalizedValuesA;
     
-    return 0;
+    return normalizedValues;
 }
 
 

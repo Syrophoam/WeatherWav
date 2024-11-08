@@ -174,6 +174,8 @@ void *main_t(void* input){
     long frameCounter = 0;
     std::vector<int> inputPosition = {ws.ws_col/2,ws.ws_row/2};
     
+    
+    // fix this whole fuckin thing
     while (running) {
         std::string init;
         std::string logoFrame;
@@ -265,26 +267,6 @@ void *main_t(void* input){
                 break;
             }
             case 5:{
-                updateGUI(ws);
-//                glfwFocusWindow(window);
-//
-//                glfwPollEvents();
-//                if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-//                    inputPosition[1] += 1;
-//                }
-//            
-//                if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-//                    inputPosition[1] -= 1;
-//                }
-//                if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-//                    inputPosition[0] -= 2;
-//                }
-//                if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-//                    inputPosition[0] += 2;
-//                }
-                //reimple ment with juce keyboard input
-                //USE ANOTHER THREAD TO LOOK FOR CIN
-                
                 
                 pthread_t keyListener;
                 pthread_create(&keyListener, NULL, keyListenrFunction, (void *)&mainT);
@@ -307,11 +289,7 @@ void *main_t(void* input){
                 
                 initCoordLUT(coord, ws);
                 
-//                if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
-//                    running = false;
-//                    
-//                    return 0;
-//                }
+
                 
                 map_s.erase(map_s.end()-((ws.ws_col+1)*2), map_s.end());
                 std::cout << map_s;
@@ -421,6 +399,20 @@ void *main_t(void* input){
         curl_slist_free_all(headers);
         jsonResponse = json::parse(chunk.memory);
     
+    json::iterator dataIter = jsonResponse["variables"].begin();
+    int numVari = jsonResponse["variables"].size();
+    
+    for(int i = 0; i < numVari; i++){
+        std::string variName = dataIter.value()["standardName"];
+        std::cout<<variName<<"      "<<i<<std::endl;
+//        printf("variable name = %s",variName.c_str());
+//        printf("midi cc = %i",i);
+//        printf("/0");
+        
+        
+        dataIter++;
+    }
+    printf("num vari = %i", numVari);
     
     initNorm(jsonResponse);
     
@@ -458,28 +450,22 @@ void *main_t(void* input){
         ambJson = json::parse(ambChunk.memory);
         free(ambChunk.memory);
         
-        normalizeAmb(ambJson);
+        std::vector<std::vector<double>> normValues = normalizeAmb(ambJson);
         
         std::vector<std::vector<double>> variableGroup[5];
-        
-        
-//        formatResponse(variableGroup, ambJson["variables"]);
-        
+
         juce::MidiBuffer ambBuff;
         ambBuff.clear();
-        //allocate space later ^
-        
-        ambBuff.addEvents(groupWriteSequenceAmb(variableGroup[0], mainT->bufferOffest, 1), 0, 44100 * 60, 0);
-        ambBuff.addEvents(groupWriteSequenceAmb(variableGroup[1], mainT->bufferOffest, 2), 0, 44100 * 60, 0);
-        ambBuff.addEvents(groupWriteSequenceAmb(variableGroup[2], mainT->bufferOffest, 3), 0, 44100 * 60, 0);
-        ambBuff.addEvents(groupWriteSequenceAmb(variableGroup[3], mainT->bufferOffest, 4), 0, 44100 * 60, 0);
-        ambBuff.addEvents(groupWriteSequenceAmb(variableGroup[4], mainT->bufferOffest, 5), 0, 44100 * 60, 0);
+
+        ambBuff.addEvents(groupWriteSequenceAmb(normValues, mainT->bufferOffest, 5), 0, 44100 * 60, 0);
         
         mainT->midiBuffer.clear();
         mainT->midiBuffer.addEvents(ambBuff, 0, 44100 * 60, 0);
         mainT->sendMsg = true;
         
         mainT->b = 1.f;
+        
+        
 
         std::this_thread::sleep_for(std::chrono::seconds(60)); // use chrono sleep to account for the time curl and midi code takes
     }
