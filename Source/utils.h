@@ -79,7 +79,6 @@ void initNorm(json data){
         findMinMax(vari["data"], variInfo.min, variInfo.max);
         variInfo.identifier = vari["standardName"];
         minMaxVec.push_back(variInfo);
-
         
         dataIter ++;
     }
@@ -106,10 +105,16 @@ std::vector<std::vector<double>> normalizeAmb(json data){
     for(int i = 0; i < numVari; i++){
         double vari1 = dataIter.value()["data"][0];
         double vari2 = dataIter.value()["data"][1];
+        
         std::string variName = minMaxVec[i].identifier;
         
         double min = minMaxVec[i].min;
         double max = minMaxVec[i].max;
+        
+        if(vari1 < min){min = vari1;}
+        if(vari2 < min){min = vari2;}
+        if(vari1 > max){max = vari1;}
+        if(vari2 > max){max = vari2;}
         
         double delta = max - min;
         
@@ -120,10 +125,11 @@ std::vector<std::vector<double>> normalizeAmb(json data){
         normalizedValuesA.push_back(normValA);
         normalizedValuesB.push_back(normValB);
         
+        
         dataIter ++;
     }
     normalizedValues[0] = normalizedValuesA;
-    normalizedValues[1] = normalizedValuesA;
+    normalizedValues[1] = normalizedValuesB;
     
     return normalizedValues;
 }

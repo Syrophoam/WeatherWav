@@ -5,7 +5,7 @@
 #include "Midi.hpp"
 #include "GUI.hpp"
 #include "utils.h"
-#include "API.h"
+#include "API.h" 
 #include "audio.h"
 //#include "3DRenderer.h"
 #include "cbmp/cbmp.h"
@@ -48,23 +48,13 @@ struct image {
     int height;
 };
 
+struct ambientMidiValues{
+    std::vector<std::vector<double>> values;
+    std::vector<std::string> variNames;
+    bool rstNcurse;
+};
 
-void loadImage(std::string imageFileName, struct image &imgStrct){
-    imgData img;
-    imageFileName += ".bmp";
-    
-    loadImage(imageFileName.data(), &img);
-    
-    std::vector<std::vector<pixelData>> imgDat(img.width,std::vector<pixelData>(img.height));
-    imgDat = getImageData(img.bmp, img.width, img.height);
-    
-    imgStrct.imgStruct = img;
-    imgStrct.width = img.width;
-    imgStrct.height = img.height;
-    imgStrct.imgData = imgDat;
 
-    bclose(img.bmp);
-} 
 
 bool runningFunc = true;
 // ^[[Aup ^[[Bdown ^[[Dleft ^[[Cright
@@ -102,7 +92,7 @@ void *main_t(void* input){
      }
     
     std::ofstream dayVal;
-    dayVal.open("/Users/syro/WeatherWav/Media/dayValData");
+    dayVal.open("/Users/syro/WeatherWav/Media/dayValData"); // $PATH
     std::string dayValDate;
 //    while ( dayVal >> dayValDate ){
 //        
@@ -142,8 +132,8 @@ void *main_t(void* input){
     // ----- Init ----- //
     bool running = true;
     bool useDefault = true;
-    
-    std::string home{std::getenv("HOME")};
+     
+    std::string home{std::getenv("HOME")}; // $PATH
     std::string path = home;
     path += "/WeatherWav/Media/";
     
@@ -152,23 +142,23 @@ void *main_t(void* input){
     
     //----- GUI ------//
     struct winsize ws;
-    initGUI(ws);
-    updateGUI(ws);
+//    initGUI(ws);
+//    updateGUI(ws);
     
 //    initRenderer();
 //    mainRenderer(); <- gonna be so hard :(
     
     image logo;
-    loadImage("Logo", logo);
+//    loadImage("Logo", logo);
     
     image map;
-    loadImage("map", map);
+//    loadImage("map", map);
     
     image multi;
-    loadImage("multi", multi);
+//    loadImage("multi", multi);
     
     image empty;
-    loadImage("empty", empty);
+//    loadImage("empty", empty);
     
     long currentFrame = -1;
     long frameCounter = 0;
@@ -181,15 +171,15 @@ void *main_t(void* input){
         std::string logoFrame;
         std::string multiFrame; 
         
-        updateGUI(ws);
-        setTransform(1., 1., frameCounter%logo.width, 0.);
+//        updateGUI(ws);
+//        setTransform(1., 1., frameCounter%logo.width, 0.);
         
         switch (currentFrame) {
                 
 
             case -1:{
                 //width & height are the wrong way around but works
-                init = bitMapView(logo.width, logo.height, logo.imgData, 0,1.f);
+//                init = bitMapView(logo.width, logo.height, logo.imgData, 0,1.f);
                 std::cout << init;
                 currentFrame = 0;
                 
@@ -215,7 +205,7 @@ void *main_t(void* input){
                 
             case 1:{
                 
-                logoFrame = bitMapView(logo.width, logo.height, logo.imgData, 0,1.f);
+//                logoFrame = bitMapView(logo.width, logo.height, logo.imgData, 0,1.f);
                 std::cout << logoFrame;
                 if (frameCounter > 30) {
                     mainT->b = 1;
@@ -226,7 +216,7 @@ void *main_t(void* input){
             }
             case 2:{
                 
-                multiFrame = bitMapView(multi.width, multi.height, multi.imgData, frameCounter%3,1.f);
+//                multiFrame = bitMapView(multi.width, multi.height, multi.imgData, frameCounter%3,1.f);
                 std::cout<< multiFrame;
                 if (frameCounter > 60) {
                     mainT->b = 1;
@@ -237,7 +227,7 @@ void *main_t(void* input){
             }
             case 3:{
                 std::string map_s;
-                map_s = bitMapView(map.width, map.height, map.imgData, 0,1.f);
+//                map_s = bitMapView(map.width, map.height, map.imgData, 0,1.f);
                 std::cout << map_s;
                 std::cout << "enter coodrinates [1] or locate on map [2]";
                 int option;
@@ -253,7 +243,7 @@ void *main_t(void* input){
                 
             case 4:{
                 std::string map_str;
-                map_str = bitMapView(map.width, map.height, map.imgData, 0,1.f);
+//                map_str = bitMapView(map.width, map.height, map.imgData, 0,1.f);
                 std::cout << map_str;
                 std::cout << "Longitude ?";
                 std::cin >> lon;
@@ -273,7 +263,7 @@ void *main_t(void* input){
                 std::cout<<std::endl<<mainT->keyVal<<std::endl;
                 
                 std::string map_s;
-                map_s = bitMapView(map.width, map.height, map.imgData, 0,1.f);
+//                map_s = bitMapView(map.width, map.height, map.imgData, 0,1.f);
 
                 int positionIndex =
                 (inputPosition[0]%ws.ws_col) + ((inputPosition[1]%ws.ws_row) * (ws.ws_col+1));
@@ -383,40 +373,39 @@ void *main_t(void* input){
         res = curl_easy_perform(handle);
         //        if(res != CURLE_OK){
         const char *strErr = curl_easy_strerror( res );
-        printf("libcurl said %s\n", strErr);
+//        printf("libcurl said %s\n", strErr);
         
         size_t len = strlen(error);
-        fprintf(stderr, "\nlibcurl: (%d) ", res);
+//        fprintf(stderr, "\nlibcurl: (%d) ", res);
         
-        if(len)
-            fprintf(stderr, "%s%s", error,
-                    ((error[len - 1] != '\n') ? "\n" : ""));
-        else
-            fprintf(stderr, "%s\n", curl_easy_strerror(res));
+//        if(len)
+//            fprintf(stderr, "%s%s", error,
+//                    ((error[len - 1] != '\n') ? "\n" : ""));
+//        else
+//            fprintf(stderr, "%s\n", curl_easy_strerror(res));
         
-        printf("Page data:\n\n%s\n", chunk.memory);
-        curl_easy_cleanup(handle);
-        curl_slist_free_all(headers);
-        jsonResponse = json::parse(chunk.memory);
+//        printf("Page data:\n\n%s\n", chunk.memory);
+    
+    std::string resStr(chunk.memory);
+    std::cout<<resStr.find("null")<<std::endl;
+    // TODO to fucking do
+//    replce null's with next value, recursive func ?
+
+    curl_easy_cleanup(handle);
+    curl_slist_free_all(headers);
+    jsonResponse = json::parse(chunk.memory);
     
     json::iterator dataIter = jsonResponse["variables"].begin();
     int numVari = jsonResponse["variables"].size();
     
     for(int i = 0; i < numVari; i++){
         std::string variName = dataIter.value()["standardName"];
-        std::cout<<variName<<"      "<<i<<std::endl;
-//        printf("variable name = %s",variName.c_str());
-//        printf("midi cc = %i",i);
-//        printf("/0");
-        
-        
         dataIter++;
     }
-    printf("num vari = %i", numVari);
     
     initNorm(jsonResponse);
     
-    NULL ? NULL : NULL; // <- valid c++ ??
+    TRUE ? NULL : NULL; // <- valid c++ ??
     
     //----- ambient version? -//
     CURL *handle2 = curl_easy_init();
@@ -429,7 +418,7 @@ void *main_t(void* input){
         struct response ambChunk = {.memory = (char *)malloc(0),
                                  .size = 0};
 
-        printf("starting ambient mode");
+//        printf("starting ambient mode");
         json ambJson = requestMS(pos,1,1); // 0 = 1h, 1 = 1m
         std::string jsonString = ambJson.dump();
 
@@ -447,12 +436,16 @@ void *main_t(void* input){
         
         res = curl_easy_perform(handle2);
         
+        
         ambJson = json::parse(ambChunk.memory);
+        
+//        printf("Page data:\n\n%s\n", ambChunk.memory);
         free(ambChunk.memory);
         
+        std::cout<< "fin amb"<<std::endl;
         std::vector<std::vector<double>> normValues = normalizeAmb(ambJson);
         
-        std::vector<std::vector<double>> variableGroup[5];
+//        std::vector<std::vector<double>> variableGroup[5];
 
         juce::MidiBuffer ambBuff;
         ambBuff.clear();
@@ -463,11 +456,28 @@ void *main_t(void* input){
         mainT->midiBuffer.addEvents(ambBuff, 0, 44100 * 60, 0);
         mainT->sendMsg = true;
         
-        mainT->b = 1.f;
+//        mainT->b = 1.f;
         
+        pthread_t guiThread;
+        ambientMidiValues midiValStruct;
+        midiValStruct.variNames.reserve(17);
+        midiValStruct.values = normValues;
         
-
+        json::iterator variNameIter = ambJson["variables"].begin();
+        std::cout<<ambJson["variables"].size()<<'\n';
+        for(int i = 0; i < ambJson["variables"].size(); i++){
+            midiValStruct.variNames.push_back(variNameIter.value()["standardName"]);
+            variNameIter ++;
+        }
+        
+        midiValStruct.rstNcurse = false;
+        
+        if(pthread
+        
+        pthread_create(&guiThread, NULL, mainGUI, (void *)&midiValStruct);
+        
         std::this_thread::sleep_for(std::chrono::seconds(60)); // use chrono sleep to account for the time curl and midi code takes
+        midiValStruct.rstNcurse = true;
     }
 
 //    if(ambientMode){
@@ -476,7 +486,7 @@ void *main_t(void* input){
 //    }
     
     //----- JSON - Recieve ------//
-    std::cout<<"parsing Data"<<std::endl;
+//    std::cout<<"parsing Data"<<std::endl;
     
     std::vector<std::vector<double>> variableGroup[5];
     

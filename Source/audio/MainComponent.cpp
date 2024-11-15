@@ -20,18 +20,22 @@ MainComponent::MainComponent()
         setAudioChannels (2, 2);
     }
 }
+std::unique_ptr<juce::MidiOutput> midiO = nullptr;
+
+int sampleRateG;
+pthread_t t;
+mainThread mainT;
 
 MainComponent::~MainComponent()
 {
     // This shuts down the audio device and clears the audio source.
     shutdownAudio();
+    midiO.~unique_ptr();
+//    pthread_join(t, NULL);
 }
 
 
-int sampleRateG;
-pthread_t t; 
-mainThread mainT;
-std::unique_ptr<juce::MidiOutput> midiO = nullptr;
+
 
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
@@ -47,7 +51,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     midiO = juce::MidiOutput::openDevice(devId);
     midiO->startBackgroundThread();
     
-    std::cout<<devLs[0].name<<std::endl;
+//    std::cout<<devLs[0].name<<std::endl;
     
     midiO->clearAllPendingMessages();
     timeSent = 0;
@@ -59,7 +63,6 @@ int cnt = 0;
 double ramp = 0;
 double fbEnv = 0;
 
-
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
 {
     
@@ -70,10 +73,11 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
     
     if(mainT.sendMsg){
         mainT.sendMsg = false;
-        
-        midiO->sendBlockOfMessages(mainT.midiBuffer, juce::Time::getMillisecondCounter(), 44100);
+    
+        midiO->sendBlockOfMessages(mainT.midiBuffer, juce::Time::getMillisecondCounter(), sampleRateG);
+//        midiO->sendBlockOfMessagesNow(mainT.midiBuffer);
+
         mainT.bufferOffest += 44100 * 60;
-        
     }
     
     for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
@@ -105,8 +109,6 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
             cnt %= sampleRateG;
         }
 }
-
-
 
 void MainComponent::releaseResources()
 {
