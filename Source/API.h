@@ -92,6 +92,10 @@ json requestMS(std::map<std::string,float> pos, int repeats, int timeGap){ // me
 
     timeGap ? timeGapString = "1m" : timeGapString = "1h";
     
+    //testing//
+    timeGapString = "30m";
+//    repeats = 96;
+    
     std::map time = std::map<std::string, std::string>{
         {"from",currentTime}, {"interval",timeGapString}
     };
