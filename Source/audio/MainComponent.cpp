@@ -59,7 +59,6 @@ int cnt = 0;
 double ramp = 0;
 double fbEnv = 0;
 
-
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
 {
     
@@ -73,7 +72,7 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
         
         midiO->sendBlockOfMessages(mainT.midiBuffer, juce::Time::getMillisecondCounter(), 44100);
         mainT.bufferOffest += 44100 * 60;
-        
+//        midiO->sendMessageNow(juce::MidiMessage::controllerEvent(1, 0, 70));
     }
     
     for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)

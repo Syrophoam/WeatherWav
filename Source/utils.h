@@ -4,63 +4,36 @@
 //
 //  Created by Syro Fullerton on 23/09/2024.
 //
-//#include "API.h" 
+
+#include <iostream>
+//#include "API.h"
 using namespace nlohmann;
 
-std::vector<double> normalizeValues(json values){
+std::vector<u_int8_t> normalizeValues(json values){
     
     unsigned long size = values.size();
+    double max, min;
     
-    double max = -std::numeric_limits<double>::max();
-    double min = std::numeric_limits<double>::max();
+    max = *std::max_element(values.begin(), values.end());
+    min = *std::min_element(values.begin(), values.end());
     
-    for(int i = 0; i < size; i++){
-        double buff = values[i];
-        
-        if(buff > max){
-            max = buff;
-        }
-        if(buff < min){
-            min = buff;
-        }
-    }
-    double delta = max - min;
+    float delta = max - min;
     
-    std::vector<double> normalizedValues(size);
-    double normVal = 0;
+    std::vector<u_int8_t> normalizedValues(size);
+    double normVal;
+    
     for (int i = 0; i < size; i++) {
         
         normVal = double(values[i]) - min;
         normalizedValues[i] = normVal / delta;
         normalizedValues[i] *= 127;
     }
+    
     return normalizedValues;
 }
 
-void findMinMax(json values, double &min, double &max){
-    
-    unsigned long size = values.size();
-    
-    max = -std::numeric_limits<double>::max();
-    min = std::numeric_limits<double>::max();
-    
-    for(int i = 0; i < size; i++){
-        double buff = values[i];
-        
-        if(buff > max){
-            max = buff;
-        }
-        if(buff < min){
-            min = buff;
-        }
-    }
-}
 struct variableMinMax {
-    uint32_t minMax;
-    std::string identifier;
-    
-    double min;
-    double max;
+    double min, max;
 };
 
 std::vector<variableMinMax> minMaxVec;
@@ -68,31 +41,21 @@ std::vector<variableMinMax> minMaxVec;
 void initNorm(json data){
     
     json variables = data["variables"];
-    
     json numVari = variables.size();
+    
     json::iterator dataIter = variables.begin();
     
     for(int i = 0; i < numVari; i++){
         json vari = dataIter.value();
         variableMinMax variInfo;
+        auto values = vari["data"];
         
-        findMinMax(vari["data"], variInfo.min, variInfo.max);
-        variInfo.identifier = vari["standardName"];
+        variInfo.min = *std::min_element(values.begin(), values.end());
+        variInfo.max = *std::max_element(values.begin(), values.end());
+        
         minMaxVec.push_back(variInfo);
-        
-//      std::cout<<uint16_t(minMax)<<std::endl;
-//      std::cout<<uint16_t(minMax >> 16)<<std::endl;
-        
         dataIter ++;
     }
-}
-
-void uncoupleValues(u_int16_t val, u_int8_t &valA, u_int8_t &valB){
-    valA = u_int8_t(val);   valB = (val >> 16);
-}
-
-void coupleValues(u_int16_t &val, u_int8_t valA, u_int8_t valB){
-    val = valA;             val += valB << 16;
 }
 
 u_int16_t normalizeAmb(json data){
@@ -106,6 +69,12 @@ u_int16_t normalizeAmb(json data){
         json vari1 = dataIter.value()["data"][0];
         json vari2 = dataIter.value()["data"][1];
         
+        double buff = 0;
+        if(vari1 != nullptr){
+            buff = vari1;
+        }
+        
+        
         double min = minMaxVec[i].min;
         double max = minMaxVec[i].max;
         
@@ -113,8 +82,8 @@ u_int16_t normalizeAmb(json data){
         
         double normVal = 0;
         
-            
-        normVal = double(vari1) - min;
+        
+        normVal = buff - min;
         normVal = normVal / delta;
         normVal *= 127;
         
@@ -125,17 +94,17 @@ u_int16_t normalizeAmb(json data){
 }
 
 
-void formatResponse(std::vector<std::vector<double>> variableGroup[], nlohmann::json variables){
+void formatResponse(std::vector<std::vector<u_int8_t>> variableGroup[], nlohmann::json variables){
 
-    std::vector<double> airVisibility, airHumidity, airPressure, airTemperature, airCAPE;
-    std::vector<double> cloudCover, cloudBase;
-    std::vector<double> windSpeedEast, windSpeedNorth, windDirection, windSpeed;
-    std::vector<double> fluxPrecipitation, fluxRadiationLongwave, fluxRadiationShortwave;
-    std::vector<double> currentSpeedNorth, currentSpeedEast, currentSpeedNorthBarotropic, currentSpeedEastBarotropic;
-    std::vector<double> seaDepthSurface, seaDepthSeaLevel, seaTempurature;
-    std::vector<double> waveDirectionMean, wavePeriodPeak, waveHeight;
+    std::vector<u_int8_t> airVisibility, airHumidity, airPressure, airTemperature, airCAPE;
+    std::vector<u_int8_t> cloudCover, cloudBase;
+    std::vector<u_int8_t> windSpeedEast, windSpeedNorth, windDirection, windSpeed;
+    std::vector<u_int8_t> fluxPrecipitation, fluxRadiationLongwave, fluxRadiationShortwave;
+    std::vector<u_int8_t> currentSpeedNorth, currentSpeedEast, currentSpeedNorthBarotropic, currentSpeedEastBarotropic;
+    std::vector<u_int8_t> seaDepthSurface, seaDepthSeaLevel, seaTempurature;
+    std::vector<u_int8_t> waveDirectionMean, wavePeriodPeak, waveHeight;
         
-    
+     
     airVisibility =         normalizeValues(variables["air.visibility"]                         ["data"]);
     airHumidity =           normalizeValues(variables["air.humidity.at-2m"]                     ["data"]);
     airPressure =           normalizeValues(variables["air.pressure.at-sea-level"]              ["data"]);

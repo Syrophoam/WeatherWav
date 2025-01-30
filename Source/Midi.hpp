@@ -1,19 +1,9 @@
 #include <sys/ioctl.h>
-#include <iostream>
-#include <string.h>
-#include <vector>
 #include <JuceHeader.h>
 #include <nlohmann/json.hpp>
-#include <limits>
-  
-
 
 double lerp(double a, double b, double interp, bool isUp){
-    if(isUp){
-        interp = pow(interp, .5);
-    }else{
-        interp = pow(interp, 2);
-    }
+    interp = isUp ? pow(interp, 0.5) : pow(interp, 2);
     return (((b*2*interp)+(a*-2*interp))/2) + a;
 }
 
@@ -26,8 +16,8 @@ juce::MidiMessageSequence readMidi(std::string filePath, int trackIndex){
     juce::MidiFile inFile;
     juce::File file = juce::File(filePath);
     juce::FileInputStream stream = juce::FileInputStream(file);
-    inFile.readFrom(stream);
     
+    inFile.readFrom(stream);
     seq.addSequence(*inFile.getTrack(trackIndex), 0);
     
     juce::MidiMessageSequence::MidiEventHolder **eventHolder;
@@ -72,9 +62,9 @@ juce::MidiMessageSequence loopMidiSequence(juce::MidiMessageSequence seq, int lo
     return seqCpy;
 }
 
-juce::MidiMessageSequence groupWriteSequence(std::vector<std::vector<double>> group){
+juce::MidiMessageSequence groupWriteSequence(std::vector<std::vector<u_int8_t>> group){
     
-    std::vector<double> values;
+    std::vector<u_int8_t> values;
     juce::MidiMessageSequence mainSeq;
     
     for(int k = 0; k < group.size(); k++){
@@ -83,8 +73,8 @@ juce::MidiMessageSequence groupWriteSequence(std::vector<std::vector<double>> gr
         juce::MidiMessageSequence seq;
         
         values = group[k];
-    
-    unsigned long numValues = values.size();
+        
+        size_t numValues = values.size();
         int midiCC = k;
         
     for (int j = 0; j < numValues; j++) {
@@ -114,43 +104,29 @@ juce::MidiMessageSequence groupWriteSequence(std::vector<std::vector<double>> gr
     return mainSeq;
 }
 
-unsigned int variRand = 0;
-juce::MidiBuffer groupWriteSequenceAmb(std::vector<std::vector<double>> group, unsigned long bufferOffset, int chan){
-    juce::MidiBuffer buf;
+juce::MidiBuffer groupWriteSequenceAmb(std::vector<std::vector<double>> group, int bufferOffset, int chan){
     
-    // stupid goddamn 2 midiMessage long buffer is normalized so all values in group are 0 or 127, normalize them to theroitical min - max
+    juce::MidiBuffer buf;
+    int sampleRate = 44100; // ?
+    int numCCPointsPerSec = sampleRate * 60;  // increase resolution ?
     
     for(int vari = 0; vari < group.size(); vari ++){
         
-//        variRand += rand();
-//        variRand %= 127;
-        
-        for (int event = 0; event < (44100 * 60); event += 44100) { // increase resolution
-            unsigned long eventPos = event + bufferOffset;
+        for (int event = 0; event < numCCPointsPerSec; event += sampleRate) {
             
-            double val1 = group[vari][0];
-            double val2 = group[vari][1];
-  
-//            unsigned int val1 = 20, val2 = 110;
-//
-//            val1 += variRand;
-//            val1 %= 127;
-//            val2 += variRand;
-//            val2 %= 127;
+            int eventPos = event + bufferOffset;
             
-            double intrp = double(event)/(44100.f * 60.f);
+            float val1 = group[vari][0];
+            float val2 = group[vari][1];
             
-            uint8_t interpVal = lerp(double(val1), double(val2), intrp, true);
+            float intrp = float(event)/(44100.f * 60.f);
+            
+            uint8_t interpVal = lerp(float(val1), float(val2), intrp, true);
             
             buf.addEvent(juce::MidiMessage::controllerEvent(chan, vari, uint8_t(interpVal)), eventPos);
             
         }
-        
     }
-    
-//    buf.addEvent(juce::MidiMessage::controllerEvent(1, 10, 40), 0 + bufferOffset);
-//    buf.addEvent(juce::MidiMessage::controllerEvent(1, 10, 80), 44100 + bufferOffset);
-//    buf.addEvent(juce::MidiMessage::controllerEvent(1, 10, 0), (44100 * 2) + bufferOffset);
     return buf;
 }
 
@@ -183,7 +159,7 @@ juce::MidiMessageSequence writeSequence(std::vector<unsigned int> &values, int m
     
     juce::MidiMessage ccMsg;
     juce::MidiMessageSequence seq;
-    int numValues = values.size();
+    size_t numValues = values.size();
     
     for (int j = 0; j < numValues; j++) {
         

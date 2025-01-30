@@ -19,7 +19,7 @@ typedef struct mainThread {
     bool sendMsg;
     juce::MidiBuffer midiBuffer;
     juce::MidiMessageSequence midiSeq;
-    unsigned long bufferOffest;
+    int bufferOffest;
     
 } /* test */ ;
 
